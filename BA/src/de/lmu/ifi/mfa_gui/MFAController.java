@@ -35,12 +35,7 @@ public class MFAController {
     }
     
     /**
-     * Inneren Listener Klassen implementieren das Interface ActionListener
-     *
-     * 1: Hier wird erst der eingegebene Wert aus der View geholt
-     * 2: Der Wert wird dem Model übergeben und die Wurzel berechnet
-     * 3: Die berechnete Wurzel wird aus dem Model geladen und
-     * 4: Wieder der View zum Darstellen übergeben
+     * Inner listener classes implementing the interface ActionListener
      *
      * ACHTUNG: Fehlerprüfung muss noch implementeirt werden
      */

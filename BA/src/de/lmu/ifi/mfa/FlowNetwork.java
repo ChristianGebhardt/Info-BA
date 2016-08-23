@@ -260,6 +260,11 @@ public class FlowNetwork extends Observable implements Serializable {
 		} else {
 			s.append("Sink vertex: -" + NEWLINE);
 		}
+		if (this.maxFlow > 0) {
+			s.append("Maximum flow: " + this.maxFlow + NEWLINE);
+		} else {
+			s.append("Maximum flow: -" + NEWLINE);
+		}
         s.append("---------------------------------------------------------------"+NEWLINE);
         s.append(graph.toString());
         

@@ -359,7 +359,6 @@ public class Graph implements Serializable {
 	public int getOutFlow(int vertexId) {
 		return vertices.get(vertexId).getOutFlow();
 	}
-	
 	public int getInFlow(int vertexId) {
 		return vertices.get(vertexId).getInFlow();
 	}

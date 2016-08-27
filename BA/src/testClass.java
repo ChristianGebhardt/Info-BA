@@ -3,19 +3,19 @@ import de.lmu.ifi.mfa.*;
 
 public class testClass {
 
-	static Graph testGraph;
+//	static Graph testGraph;
 	static FlowNetwork myNetwork;
 	static TestObserver myObserver;
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		testGraph = new Graph();
-		testGraph.addVertex(0);
-		testGraph.addVertex(2);
-		testGraph.addVertex(3);
-		testGraph.addVertex(6);
-		
-		testGraph.plotGraph();
+//		testGraph = new Graph();
+//		testGraph.addVertex(0);
+//		testGraph.addVertex(2);
+//		testGraph.addVertex(3);
+//		testGraph.addVertex(6);
+//		
+//		testGraph.plotGraph();
 		
 		myNetwork = new FlowNetwork();
 		myObserver = new TestObserver(myNetwork);

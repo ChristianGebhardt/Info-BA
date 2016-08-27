@@ -7,13 +7,14 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 import de.lmu.ifi.mfa.FlowNetwork;
+import de.lmu.ifi.mfa.IFlowNetwork;
 
 public class MFAController {
 
     private MFAView ctrlView;
-    private FlowNetwork ctrlModel;
+    private IFlowNetwork ctrlModel;
 
-    public MFAController(MFAView ctrlView, FlowNetwork ctrlModel){
+    public MFAController(MFAView ctrlView, IFlowNetwork ctrlModel){
         this.ctrlModel = ctrlModel;
         this.ctrlView = ctrlView;
 

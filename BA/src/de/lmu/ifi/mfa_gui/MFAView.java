@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import de.lmu.ifi.mfa.FlowNetwork;
+import de.lmu.ifi.mfa.IFlowNetwork;
 
 public class MFAView extends JFrame implements Observer {
 
@@ -28,7 +29,7 @@ public class MFAView extends JFrame implements Observer {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private FlowNetwork myFlowNet = null;
+	private IFlowNetwork myFlowNet = null;
 
 	private     JSplitPane  splitPaneH;
 	private     JSplitPane  splitPaneV;
@@ -68,14 +69,16 @@ public class MFAView extends JFrame implements Observer {
 	private JTextArea txtPrompt;
 	private JTextArea txtDisplay;
 	
-    public MFAView(FlowNetwork flowNet) {
+    public MFAView(IFlowNetwork flowNet) {
     	//Model
     	this.myFlowNet = flowNet;
     	
     	//GUI
     	setTitle( "Maximum Flow Algorithm" );
         setBackground(Color.gray);
-
+        //setSize(1200, 800);
+        setLocation(300, 200);
+        
         JPanel topPanel = new JPanel();
         topPanel.setLayout( new BorderLayout() );
         getContentPane().add( topPanel );

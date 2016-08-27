@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-public class Graph implements Serializable {
+class Graph implements IGraph, Serializable {
 	/**
 	 * 
 	 */

@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Observable;
 
-public class FlowNetwork extends Observable implements Serializable {
+public class FlowNetwork extends Observable implements IFlowNetwork, Serializable {
 	/**
 	 * 
 	 */
@@ -123,7 +123,7 @@ public class FlowNetwork extends Observable implements Serializable {
 	    notifyObservers();
 	}
 	
-	public int dinic() {
+	public void dinic() {
 		maxFlow = 0;
 		graph.resetFlow();
 		graph.buildResidualGraph();
@@ -149,10 +149,10 @@ public class FlowNetwork extends Observable implements Serializable {
 		this.prompt = "Dinic: maximum flow F="+maxFlow+".";
 		setChanged();
 	    notifyObservers();
-		return maxFlow;
+//		return maxFlow;
 	}
 	
-	public int goldbergTarjan() {
+	public void goldbergTarjan() {
 		maxFlow = 0;
 		graph.resetFlow();
 		graph.buildResidualGraph();
@@ -175,7 +175,7 @@ public class FlowNetwork extends Observable implements Serializable {
 		this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+".";
 		setChanged();
 	    notifyObservers();
-		return maxFlow;
+//		return maxFlow;
 	}
 	
 	public void clearFlow() {

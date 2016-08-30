@@ -3,10 +3,16 @@ package de.lmu.ifi.mfa_gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.lmu.ifi.mfa.FlowNetwork;
 import de.lmu.ifi.mfa.IFlowNetwork;
 
 public class MFAController {
@@ -38,13 +44,11 @@ public class MFAController {
     /**
      * Inner listener classes implementing the interface ActionListener
      *
-     * ACHTUNG: Fehlerprüfung muss noch implementeirt werden
      */
     class AddVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int vertexId = ctrlView.getAddVertexId();
         	ctrlModel.addVertex(vertexId);
-            //_view.setErgebnis(String.valueOf(_model.getWurzel()));
         }
     }
     class RemoveVertexListener implements ActionListener {
@@ -98,20 +102,88 @@ public class MFAController {
     class SaveListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	JFileChooser fileChooser = new JFileChooser();
+        	// add filter
+        	FileNameExtensionFilter mfaFilter = new FileNameExtensionFilter("mfa files (*.mfa)", "mfa");
+        	fileChooser.addChoosableFileFilter(mfaFilter);
+        	fileChooser.setFileFilter(mfaFilter);
+        	fileChooser.setSelectedFile(new File("*.mfa"));
         	if (fileChooser.showSaveDialog(ctrlView) == JFileChooser.APPROVE_OPTION) {
         	  File file = fileChooser.getSelectedFile();
+        	  if (!file.toString().endsWith(".mfa")) {
+        	        String filename = file.toString()+".mfa";
+        	        file = new File(filename);
+        	  }
         	  ctrlModel.saveNetwork(file);
         	}
         }
     }
     class LoadListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-        	JFileChooser fileChooser = new JFileChooser();
-        	if (fileChooser.showOpenDialog(ctrlView) == JFileChooser.APPROVE_OPTION) {
-        	  File file = fileChooser.getSelectedFile();
-        	  ctrlModel.loadNetwork(file);
-        	}
-        	
+        	int example = loadExample();
+        	if (example == 0) {
+        		try {
+//	        		URL url = MFAView.class.getResource("/resources/example.mfa");
+	        		
+//	        		File file = new File(url.toURI());
+	        		File file = getFile();
+	        		ctrlModel.loadNetwork(file);
+        		} catch (Exception ex) {}
+        	} else if (example == 1) {
+	        	JFileChooser fileChooser = new JFileChooser();
+	        	// add filter
+	        	FileNameExtensionFilter mfaFilter = new FileNameExtensionFilter("mfa files (*.mfa)", "mfa");
+	        	fileChooser.addChoosableFileFilter(mfaFilter);
+	        	fileChooser.setFileFilter(mfaFilter);
+	        	if (fileChooser.showOpenDialog(ctrlView) == JFileChooser.APPROVE_OPTION) {
+	        	  File file = fileChooser.getSelectedFile();
+	        	  ctrlModel.loadNetwork(file);
+	        	}
+        	} else {}
         }
+    }
+
+    //Option dialog to load demo example or file from file system
+    private int loadExample() {
+    	Object[] options = {"Load example", "Load file"};
+    	int response = JOptionPane.showOptionDialog(ctrlView,
+    	    "Would you like to load a standard example or an external file?",
+    	    "Choose Source",
+    	    JOptionPane.YES_NO_OPTION,
+    	    JOptionPane.PLAIN_MESSAGE,
+    	    null,
+    	    options,
+    	    options[1]);
+    	return response;
+    }
+    
+    
+    private File getFile() {
+    	File file = null;
+        String resource = "/resources/example.mfa";
+        URL res = getClass().getResource(resource);
+        if (res.toString().startsWith("jar:")) {
+            try {	//read file from jar package (see: http://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file)
+                InputStream input = getClass().getResourceAsStream(resource);
+                file = File.createTempFile("example", ".tmp");
+                OutputStream out = new FileOutputStream(file);
+                int read;
+                byte[] bytes = new byte[1024];
+                while ((read = input.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+                out.close();
+                file.deleteOnExit();
+            } catch (IOException ex) {
+            	ex.printStackTrace();
+            }
+        } else {
+            //this will probably work in your IDE, but not from a JAR
+            file = new File(res.getFile());
+        }
+        
+        if (file != null && !file.exists()) {
+            throw new RuntimeException("Error: File " + file + " not found!");
+        }
+        return file;
     }
 }

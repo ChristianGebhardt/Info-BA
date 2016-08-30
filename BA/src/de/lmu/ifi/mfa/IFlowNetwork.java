@@ -1,27 +1,35 @@
 package de.lmu.ifi.mfa;
 
 import java.io.File;
+import java.util.LinkedList;
 
 public interface IFlowNetwork {
 
 	//Vertex
-	public void addVertex(int vertexId);
-	public void removeVertex(int vertexId);
+	void addVertex(int vertexId);
+	void removeVertex(int vertexId);
 	//Edge
-	public void addEdge(int vertexId1, int vertexId2, int capacity);
-	public void removeEdge(int vertexId1, int vertexId2);
+	void addEdge(int vertexId1, int vertexId2, int capacity);
+	void removeEdge(int vertexId1, int vertexId2);
 	//Source/Sink
-	public void setSource(int sourceId);
-	public void setSink(int sinkId);
+	void setSource(int sourceId);
+	int getSource();
+	void setSink(int sinkId);
+	int getSink();
 	//Evaluate
-	public void dinic();
-	public void goldbergTarjan();
+	int dinic();
+	int goldbergTarjan();
 	//Control
-	public void resetNetwork();
-	public void saveNetwork(File file);
-	public void loadNetwork(File file);
+	void resetNetwork();
+	void saveNetwork(File file);
+	void loadNetwork(File file);
 	//Output
-	public String getPrompt();
-	public String displayFlowNetwork();
-	
+	String getPrompt();
+	String displayFlowNetwork();
+	LinkedList<Integer[]> getGraphData();
+	//Update and draw
+	void updateGraph();
+	boolean isUpdateGraph();
+	void drawGraph();
+	boolean isDrawGraph();
 }

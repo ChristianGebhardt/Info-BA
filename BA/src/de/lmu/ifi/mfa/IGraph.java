@@ -1,28 +1,30 @@
 package de.lmu.ifi.mfa;
 
-public interface IGraph {
+import java.util.LinkedList;
+
+interface IGraph {
 
 	//Vertex
-	public boolean addVertex(int vertexId);
-	public boolean removeVertex(int vertexId);
-	public boolean containsVertex(int vertexId);
+	boolean addVertex(int vertexId);
+	boolean removeVertex(int vertexId);
+	boolean containsVertex(int vertexId);
 	//Edge
-	public boolean addEdge(int vertexId1, int vertexId2, int capacity);
-	public boolean removeEdge(int vertexId1, int vertexId2);
+	boolean addEdge(int vertexId1, int vertexId2, int capacity);
+	boolean removeEdge(int vertexId1, int vertexId2);
 	//Evaluate (auxiliary functions)
-	public boolean resetFlow();
-	public boolean resetExcess(int startVertexId);
-	public boolean initializeLabels(int startVertexId);
-	public void buildResidualGraph();
+	boolean resetFlow();
+	boolean resetExcess(int startVertexId);
+	boolean initializeLabels(int startVertexId);
+	void buildResidualGraph();
 	//Evaluate Dinic
-	public int buildLayeredNetwork(int startVertexId, int endVertexId);
-	public boolean searchAugmentingPath(int startVertexId, int endVertexId);
-	public int updateMinFlowIncrement();
+	int buildLayeredNetwork(int startVertexId, int endVertexId);
+	boolean searchAugmentingPath(int startVertexId, int endVertexId);
+	int updateMinFlowIncrement();
 	//Evaluate Goldberg-Tarjan
-	public int initialPush(int startVertexId, int endVertexId);
-	public int dischargeQueue();
+	int initialPush(int startVertexId, int endVertexId);
+	int dischargeQueue();
 	//Get results
-	public int getOutFlow(int vertexId);
-	public int getInFlow(int vertexId);
-	
+	int getOutFlow(int vertexId);
+	int getInFlow(int vertexId);
+	LinkedList<Integer[]> getGraphData();
 }

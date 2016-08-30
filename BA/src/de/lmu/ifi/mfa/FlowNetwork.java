@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.Observable;
 
 public class FlowNetwork extends Observable implements IFlowNetwork, Serializable {
@@ -22,6 +23,8 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	private Graph graph;
 	private int maxFlow;
 	private String prompt;
+	private boolean drawGraph;
+	private boolean updateGraph;
 	
 	
 	public FlowNetwork() {
@@ -30,10 +33,15 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		this.graph = new Graph();
 		this.maxFlow = 0;
 		this.prompt = "";
+		this.drawGraph = false;
+		this.updateGraph = false;
 	}
 	
 	
 	public void setSource(int sourceId) {
+		setSource(sourceId,true);
+	}
+	public void setSource(int sourceId, boolean draw) {
 		if (sourceId >= 0) {
 			this.sourceId = sourceId;
 			graph.addVertex(sourceId);
@@ -41,11 +49,20 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Source identifier has to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();	
 	}
 	
+	public int getSource() {
+		return sourceId;
+	}
+	
 	public void setSink(int sinkId) {
+		setSink(sinkId,true);
+	}
+	public void setSink(int sinkId, boolean draw) {
 		if (sinkId >= 0) {
 			this.sinkId = sinkId;
 			graph.addVertex(sinkId);
@@ -53,11 +70,20 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Sink identifier has to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();	
 	}
 	
+	public int getSink() {
+		return sinkId;
+	}
+	
 	public void addVertex(int vertexId) {
+		addVertex(vertexId,true);
+	}
+	public void addVertex(int vertexId, boolean draw) {
 		if (vertexId >= 0) {
 			boolean success = graph.addVertex(vertexId);
 			if (success) {
@@ -68,11 +94,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Vertex identifier has to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();
 	}
 	
 	public void removeVertex(int vertexId) {
+		removeVertex(vertexId,true);
+	}
+	public void removeVertex(int vertexId, boolean draw) {
 		if (vertexId >= 0) {
 			boolean success = graph.removeVertex(vertexId);
 			if (success) {
@@ -87,11 +118,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Vertex identifier has to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();
 	}
 	
 	public void addEdge(int vertexId1, int vertexId2, int capacity) {
+		addEdge(vertexId1,vertexId2,capacity,true);
+	}
+	public void addEdge(int vertexId1, int vertexId2, int capacity, boolean draw) {
 		if (vertexId1 >= 0 && vertexId2 >= 0) {
 			boolean success = graph.addEdge(vertexId1, vertexId2, capacity);
 			if (success) {
@@ -103,11 +139,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Vertex identifiers has to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();
 	}
 	
 	public void removeEdge(int vertexId1, int vertexId2) {
+		removeEdge(vertexId1,vertexId2,true);
+	}
+	public void removeEdge(int vertexId1, int vertexId2, boolean draw) {
 		if (vertexId1 >= 0 && vertexId2 >= 0) {
 			boolean success = graph.removeEdge(vertexId1, vertexId2);
 			if (success) {
@@ -119,11 +160,13 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		} else {
 			prompt = "Vertex identifiers have to be a valid vertex label.";
 		}
+		updateGraph = draw;
+		drawGraph = draw;
 		setChanged();
 	    notifyObservers();
 	}
 	
-	public void dinic() {
+	public int dinic() {
 		maxFlow = 0;
 		graph.resetFlow();
 		graph.buildResidualGraph();
@@ -147,12 +190,14 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		}
 		
 		this.prompt = "Dinic: maximum flow F="+maxFlow+".";
+		updateGraph = true;
+		drawGraph = false;
 		setChanged();
 	    notifyObservers();
-//		return maxFlow;
+		return maxFlow;
 	}
 	
-	public void goldbergTarjan() {
+	public int goldbergTarjan() {
 		maxFlow = 0;
 		graph.resetFlow();
 		graph.buildResidualGraph();
@@ -162,24 +207,22 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		int queueLength = graph.initialPush(sourceId, sinkId);
 		while (queueLength>0) {
 			System.out.println("Queue length: "+queueLength);
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			queueLength = graph.dischargeQueue();
 		}
 		maxFlow = graph.getOutFlow(sourceId)-graph.getInFlow(sourceId);
 		
 		this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+".";
+		updateGraph = true;
+		drawGraph = false;
 		setChanged();
 	    notifyObservers();
-//		return maxFlow;
+		return maxFlow;
 	}
 	
 	public void clearFlow() {
 		this.prompt = "Function not implemented yet.";
+		updateGraph = true;
+		drawGraph = false;
 		setChanged();
 	    notifyObservers();
 	}
@@ -190,6 +233,8 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		this.graph = new Graph();
 		this.maxFlow = 0;
 		this.prompt = "Flow network reset.";
+		updateGraph = true;
+		drawGraph = true;
 		setChanged();
 	    notifyObservers();
 	}
@@ -213,7 +258,8 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
         } catch (ClassNotFoundException e) {
         	this.prompt = "Flow network not loaded (ClassNotFoundException).";
         }    
-		
+		updateGraph = true;
+		drawGraph = true;
 		setChanged();
 	    notifyObservers();
 	}
@@ -231,7 +277,8 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
         } catch (IOException ex) {
         	this.prompt = "Flow network not saved (IOException).";
         }    
-		
+		updateGraph = false;
+		drawGraph = false;
 		setChanged();
 	    notifyObservers();
 	}
@@ -251,12 +298,12 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		s.append("FLOW NETWORK" + NEWLINE);
 		s.append("============" + NEWLINE);
 		if (this.sourceId >= 0) {
-			s.append("Source vertex: " + this.sourceId + NEWLINE);
+			s.append("Source vertex: " + this.sourceId + " (green)" + NEWLINE);
 		} else {
 			s.append("Source vertex: -" + NEWLINE);
 		}
 		if (this.sinkId >= 0) {
-			s.append("Sink vertex: " + this.sinkId + NEWLINE);
+			s.append("Sink vertex: " + this.sinkId + " (red)" + NEWLINE);
 		} else {
 			s.append("Sink vertex: -" + NEWLINE);
 		}
@@ -271,7 +318,33 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
         return s.toString();
 	}
 
+	public LinkedList<Integer[]> getGraphData() {
+		return graph.getGraphData();
+	}
+	
+	public void updateGraph() {
+		updateGraph = true;
+		drawGraph = false;
+		setChanged();
+	    notifyObservers();
+	}
+	
+	public boolean isUpdateGraph() {
+		return updateGraph;
+	}
+	
+	public void drawGraph() {
+		updateGraph = true;
+		drawGraph = true;
+		setChanged();
+	    notifyObservers();
+	}
+	
+	public boolean isDrawGraph() {
+		return drawGraph;
+	}
     
+	@Deprecated
 	public void showGraph() {
 		graph.plotGraph();
 	}

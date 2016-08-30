@@ -2,7 +2,7 @@ package de.lmu.ifi.mfa;
 
 import java.io.Serializable;
 
-public class Edge implements Serializable {
+class Edge implements Serializable {
 	/**
 	 * 
 	 */
@@ -14,7 +14,7 @@ public class Edge implements Serializable {
 	private int flow;
 	private boolean blocked;
 	
-	public Edge(Vertex startVertex, Vertex endVertex, int capacity) {
+	protected Edge(Vertex startVertex, Vertex endVertex, int capacity) {
 		this.startVertex = startVertex;
 		this.endVertex = endVertex;
 		this.capacity = capacity;
@@ -22,7 +22,7 @@ public class Edge implements Serializable {
 		this.blocked = false;
 	}
 	
-	public Edge(Vertex startVertex, Vertex endVertex, int capacity, int flow) {
+	protected Edge(Vertex startVertex, Vertex endVertex, int capacity, int flow) {
 		this.startVertex = startVertex;
 		this.endVertex = endVertex;
 		this.capacity = capacity;
@@ -30,23 +30,23 @@ public class Edge implements Serializable {
 		this.blocked = false;
 	}
 	
-	public Vertex getStartVertex() {
+	protected Vertex getStartVertex() {
 		return startVertex;
 	}
 	
-	public Vertex getEndVertex() {
+	protected Vertex getEndVertex() {
 		return endVertex;
 	}
 	
-	public int getCapacity() {
+	protected int getCapacity() {
 		return capacity;
 	}
 	
-	public int getFlow() {
+	protected int getFlow() {
 		return flow;
 	}
 		
-	public boolean setFlow(int flow) {
+	protected boolean setFlow(int flow) {
 		if (flow > this.capacity || flow < 0) {
 			return false;
 		} else {
@@ -55,15 +55,15 @@ public class Edge implements Serializable {
 		}
 	}
 	
-	public boolean isBlocked() {
+	protected boolean isBlocked() {
 		return blocked;
 	}
 	
-	public void setBlocked(boolean blocked) {
+	protected void setBlocked(boolean blocked) {
 		this.blocked = blocked;
 	}
 	
-	public Vertex pushFlowForward() {	//to push in edge direction
+	protected Vertex pushFlowForward() {	//to push in edge direction
 		int previousExcess = endVertex.getExcess();
 		int deltaFlow = 0;
 		if(this.getStartVertex().getExcess() == -1) {	//initial push start vertex
@@ -90,7 +90,7 @@ public class Edge implements Serializable {
 		}
 	}
 	
-	public Vertex pushFlowBackward() {	//to push in reverse edge direction
+	protected Vertex pushFlowBackward() {	//to push in reverse edge direction
 		int previousExcess = startVertex.getExcess();
 		int deltaFlow = 0;
 		if (flow <= endVertex.getExcess()) {	//saturating push

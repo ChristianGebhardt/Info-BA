@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-public class Vertex implements Serializable {
+class Vertex implements Serializable {
 	/**
 	 * 
 	 */
@@ -21,7 +21,7 @@ public class Vertex implements Serializable {
 	private boolean deadEnd;
 	private boolean increasedLabel;
 	
-	public Vertex(int id) {
+	protected Vertex(int id) {
 		this.id = id;
 		this.excess = 0;
 		this.label = 0;
@@ -33,7 +33,7 @@ public class Vertex implements Serializable {
 		this.deadEnd = false;
 	}
 	
-	public boolean addEdge(Vertex endVertex,int capacity) {
+	protected boolean addEdge(Vertex endVertex,int capacity) {
 		if (!containsEdge(endVertex)) {
 			neighbors.add(new Edge(this,endVertex,capacity));
 			return true;
@@ -42,7 +42,7 @@ public class Vertex implements Serializable {
 		}
 	}
 	
-	public boolean removeEdge(Vertex endVertex) {
+	protected boolean removeEdge(Vertex endVertex) {
 		if (containsEdge(endVertex)) {
 			Edge oldEdge = getEdge(endVertex);
 			if (oldEdge != null) {
@@ -57,14 +57,14 @@ public class Vertex implements Serializable {
 		}
 	}
 	
-	public void removeAllEdges() {
+	protected void removeAllEdges() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			listIterator.next().getEndVertex().decrementPredessors();
 		}
 	}
 	
-	public boolean containsEdge(int vertexId) {
+	protected boolean containsEdge(int vertexId) {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			if (listIterator.next().getEndVertex().id() == vertexId) {
@@ -74,7 +74,7 @@ public class Vertex implements Serializable {
 		return false;
 	}
 	
-	public boolean containsEdge(Vertex endVertex) {
+	protected boolean containsEdge(Vertex endVertex) {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			if (listIterator.next().getEndVertex() == endVertex) {
@@ -84,7 +84,7 @@ public class Vertex implements Serializable {
 		return false;
 	}
 	
-	public Edge getEdge(Vertex endVertex) {
+	protected Edge getEdge(Vertex endVertex) {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			Edge nextEdge = listIterator.next();
@@ -95,31 +95,31 @@ public class Vertex implements Serializable {
 		return null;
 	}
 	
-	public LinkedList<Edge> getAllEdges() {
+	protected LinkedList<Edge> getAllEdges() {
 		return neighbors;
 	}
 	
-	public LinkedList<Edge> getAllResEdges() {
+	protected LinkedList<Edge> getAllResEdges() {
 		return resNeighbors;
 	}
 	
-	public int id() {
+	protected int id() {
 		return this.id;
 	}
 	
-	public void incrementPredessors() {
+	protected void incrementPredessors() {
 		this.predessors++;
 	}
 	
-	public void decrementPredessors() {
+	protected void decrementPredessors() {
 		this.predessors--;
 	}
 	
-	public int getPredessors() {
+	protected int getPredessors() {
 		return predessors;
 	}
 	
-	public boolean resetFlow() {
+	protected boolean resetFlow() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			Edge nextEdge = listIterator.next();
@@ -130,7 +130,7 @@ public class Vertex implements Serializable {
 		return true;
 	}
 	
-	public int getOutFlow() {
+	protected int getOutFlow() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		int outFlow = 0;
 		while (listIterator.hasNext()) {
@@ -140,7 +140,7 @@ public class Vertex implements Serializable {
 		return outFlow;
 	}
 	
-	public int getInFlow() {
+	protected int getInFlow() {
 		ListIterator<Edge> listIterator = resNeighbors.listIterator();
 		int inFlow = 0;
 		while (listIterator.hasNext()) {
@@ -150,48 +150,48 @@ public class Vertex implements Serializable {
 		return inFlow;
 	}
 	
-	public void setLayer(int layer) {
+	protected void setLayer(int layer) {
 		this.layer = layer;
 	}
 	
-	public int getLayer() {
+	protected int getLayer() {
 		return this.layer;
 	}
 	
-	public void resetLayer() {
+	protected void resetLayer() {
 		this.setLayer(-1);
 	}
 	
-	public void setLabel(int label) {
+	protected void setLabel(int label) {
 		this.label = label;
 	}
 	
-	public int getLabel() {
+	protected int getLabel() {
 		return this.label;
 	}
 	
-	public void resetLabel() {
+	protected void resetLabel() {
 		this.setLabel(0);
 	}
 	
-	public void setExcess(int excess) {
+	protected void setExcess(int excess) {
 		this.excess = excess;
 	}
 	
-	public int getExcess() {
+	protected int getExcess() {
 		return this.excess;
 	}
 	
-	public void changeExcess(int deltaExcess) {
+	protected void changeExcess(int deltaExcess) {
 		this.excess += deltaExcess;
 		this.increasedLabel = false;
 	}
 	
-	public void resetExcess() {
+	protected void resetExcess() {
 		this.setExcess(0);
 	}
 	
-	public void relabelVertex() {
+	protected void relabelVertex() {
 		int newLabel = Integer.MAX_VALUE;
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {	//check normal edges
@@ -212,54 +212,59 @@ public class Vertex implements Serializable {
 		System.out.println("Relabel vertex "+this.id+" to "+this.label);
 	}
 	
-	public void resetIncreasedLabel() {
+	protected void resetIncreasedLabel() {
 		this.increasedLabel = false;
 	}
 	
-	public boolean labelIncreased() {
+	protected boolean labelIncreased() {
 		return increasedLabel;
 	}
 	
-	public Vertex push_relabel() {
+	protected Vertex push_relabel() {
 		Edge pushEdge = this.getNextEdge();
 		Vertex newActiveVerex;
-		if(pushEdge == null)
+		if(pushEdge == null) {
 			System.out.println("FAILURE for vertex"+this.toString());
-		if (this == pushEdge.getStartVertex()) {			
-			if (pushEdge.getStartVertex().getLabel() == pushEdge.getEndVertex().getLabel()+1 && pushEdge.getCapacity()>pushEdge.getFlow()) {
-				newActiveVerex = pushEdge.pushFlowForward();
-			} else if (this.isDead()) {
-				this.relabelVertex();
-				this.setDead(false);
-				newActiveVerex = null;
-			} else {
-				//Do nothing
-				newActiveVerex = null;
-			}
+			this.relabelVertex();
+			this.setDead(false);
+			newActiveVerex = null;
 		} else {
-			if (pushEdge.getEndVertex().getLabel() == pushEdge.getStartVertex().getLabel()+1 && 0<pushEdge.getFlow()) {
-				newActiveVerex = pushEdge.pushFlowBackward();
-			} else if (this.isDead()) {
-				this.relabelVertex();
-				this.setDead(false);
-				newActiveVerex = null;
+			if (this == pushEdge.getStartVertex()) {			
+				if (pushEdge.getStartVertex().getLabel() == pushEdge.getEndVertex().getLabel()+1 && pushEdge.getCapacity()>pushEdge.getFlow()) {
+					newActiveVerex = pushEdge.pushFlowForward();
+				} else if (this.isDead()) {
+					this.relabelVertex();
+					this.setDead(false);
+					newActiveVerex = null;
+				} else {
+					//Do nothing
+					newActiveVerex = null;
+				}
 			} else {
-				//Do nothing
-				newActiveVerex = null;
+				if (pushEdge.getEndVertex().getLabel() == pushEdge.getStartVertex().getLabel()+1 && 0<pushEdge.getFlow()) {
+					newActiveVerex = pushEdge.pushFlowBackward();
+				} else if (this.isDead()) {
+					this.relabelVertex();
+					this.setDead(false);
+					newActiveVerex = null;
+				} else {
+					//Do nothing
+					newActiveVerex = null;
+				}
 			}
 		}
 		return newActiveVerex;
 	}
 		
-	public boolean isDead() {
+	protected boolean isDead() {
 		return this.deadEnd;
 	}
 	
-	public void setDead(boolean isDead) {
+	protected void setDead(boolean isDead) {
 		this.deadEnd = isDead;
 	}
 	
-	public Edge getNextEdge() {
+	protected Edge getNextEdge() {
 		if (this.isDead()) {
 			return null;
 		} else {
@@ -296,7 +301,7 @@ public class Vertex implements Serializable {
 		}
 	}
 	
-	public void setPreviousEdge() {
+	protected void setPreviousEdge() {
 		if (!this.isDead()) {
 			if (iteratorAugPath > 0 && iteratorAugPath <= neighbors.size()) {
 				iteratorAugPath--;
@@ -318,22 +323,22 @@ public class Vertex implements Serializable {
 		}
 	}
 	
-	public void resetEdge() {
+	protected void resetEdge() {
 		this.iteratorAugPath = 0;
 	}
 	
-	public void resetBlockings() {
+	protected void resetBlockings() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			listIterator.next().setBlocked(true);
 		}
 	}
 	
-	public void clearResNeighbors() {
+	protected void clearResNeighbors() {
 		resNeighbors = new LinkedList<Edge>();
 	}
 	
-	public void addEdgesToResGraph() {
+	protected void addEdgesToResGraph() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
 			Edge nextEdge = listIterator.next();
@@ -341,7 +346,7 @@ public class Vertex implements Serializable {
 		}
 	}
 	
-	public void addResEdge(Edge resEdge) {
+	protected void addResEdge(Edge resEdge) {
 		resNeighbors.add(resEdge);
 	}
 	
@@ -359,7 +364,24 @@ public class Vertex implements Serializable {
 		return s.toString();
 	}
 	
-	public void printNeighbors() {
+	protected LinkedList<Integer[]> getEdgehData() {
+		LinkedList<Integer[]> vertexEdges = new LinkedList<Integer[]>();
+		//iterate over edges
+		ListIterator<Edge> listIterator = neighbors.listIterator();
+		while (listIterator.hasNext()) {
+			Integer[] data = new Integer[4];
+			Edge currEdge = listIterator.next();
+			data[0] = currEdge.getStartVertex().id();
+			data[1] = currEdge.getEndVertex().id();
+			data[2] = currEdge.getCapacity();
+			data[3] = currEdge.getFlow();
+			vertexEdges.add(data);
+		}		
+		return vertexEdges;
+	}
+	
+	@Deprecated
+	protected void printNeighbors() {
 		System.out.print("Vertex "+this.id+" - Neighbors: ");
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {

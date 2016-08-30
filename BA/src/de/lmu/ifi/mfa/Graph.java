@@ -52,23 +52,19 @@ class Graph implements IGraph, Serializable {
 		return vertices.containsKey(id);
 	}
 	
-	private Vertex getVertex(int id) {
-		return vertices.get(id);
-	}
-	
 	public boolean addEdge(int vertexId1, int vertexId2, int capacity) {
 		this.addVertex(vertexId1);
 		this.addVertex(vertexId2);
-		Vertex startVertex = this.getVertex(vertexId1);
-		Vertex endVertex = this.getVertex(vertexId2);
+		Vertex startVertex = vertices.get(vertexId1);
+		Vertex endVertex = vertices.get(vertexId2);
 		startVertex.addEdge(endVertex,capacity);
 		endVertex.incrementPredessors();
 		return true;
 	}
 	
 	public boolean removeEdge(int vertexId1, int vertexId2) {
-		Vertex startVertex = this.getVertex(vertexId1);
-		Vertex endVertex = this.getVertex(vertexId2);
+		Vertex startVertex = vertices.get(vertexId1);
+		Vertex endVertex = vertices.get(vertexId2);
 		if (startVertex != null && endVertex != null) {
 			boolean success = startVertex.removeEdge(endVertex);
 			if (success) {
@@ -137,8 +133,8 @@ class Graph implements IGraph, Serializable {
 			entry.getValue().setDead(false);
         }
 		int layerNbr = 0;
-		Vertex startVertex = this.getVertex(startVertexId);
-		Vertex endVertex = this.getVertex(endVertexId);
+		Vertex startVertex = vertices.get(startVertexId);
+		Vertex endVertex = vertices.get(endVertexId);
 		Vertex tempVertex = null;
 		LinkedList<Edge> tempEdges = null;
 		LinkedList<Vertex> currentLayer = new LinkedList<Vertex>();
@@ -198,9 +194,9 @@ class Graph implements IGraph, Serializable {
 	
 	public boolean searchAugmentingPath(int startVertexId, int endVertexId) {
 		augmentingPath = new LinkedList<Edge>();
-		Vertex activeVertex = getVertex(startVertexId);
-		Vertex startVertex = getVertex(startVertexId);
-		Vertex endVertex = getVertex(endVertexId);
+		Vertex activeVertex = vertices.get(startVertexId);
+		Vertex startVertex = vertices.get(startVertexId);
+		Vertex endVertex = vertices.get(endVertexId);
 		while(activeVertex != endVertex) {
 			if(!activeVertex.isDead()) {
 				Edge newEdge = activeVertex.getNextEdge();
@@ -373,14 +369,26 @@ class Graph implements IGraph, Serializable {
 		return s.toString();
 	}
 	
-	public void plotGraph() {
+	public LinkedList<Integer[]> getGraphData() {
+		LinkedList<Integer[]> graphEdges = new LinkedList<Integer[]>();
+		//iterate over vertices
+		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
+        {
+			graphEdges.addAll(entry.getValue().getEdgehData());
+        }
+		
+		return graphEdges;
+	}
+	
+	@Deprecated
+	protected void plotGraph() {
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet()) {
 			entry.getValue().printNeighbors();
 		}
 	}
 	
 	//Auxilary function
-	public void augmentingPathToString() {
+	private void augmentingPathToString() {
 		if (augmentingPath == null) {
 			System.out.println("Empty path");
 		} else {

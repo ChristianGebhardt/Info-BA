@@ -36,13 +36,17 @@ class Graph implements IGraph, Serializable {
 	
 	public boolean removeVertex(int id) {
 		if (vertices.containsKey(id)) {
-			if (vertices.get(id).getPredessors() == 0) {
-				vertices.get(id).removeAllEdges();
-				vertices.remove(id);
-				return true;
-			} else {
-				return false;
-			}		
+			vertices.get(id).removeAllEdges();
+			vertices.get(id).removeAllResEdges();
+			vertices.remove(id);
+			return true;
+//			if (vertices.get(id).getPredessors() == 0) {
+//				vertices.get(id).removeAllEdges();
+//				vertices.remove(id);
+//				return true;
+//			} else {
+//				return false;
+//			}		
 		} else {
 			return false;
 		}	
@@ -58,7 +62,8 @@ class Graph implements IGraph, Serializable {
 		Vertex startVertex = vertices.get(vertexId1);
 		Vertex endVertex = vertices.get(vertexId2);
 		startVertex.addEdge(endVertex,capacity);
-		endVertex.incrementPredessors();
+		endVertex.addResEdge(startVertex);
+//		endVertex.incrementPredessors();
 		return true;
 	}
 	
@@ -68,7 +73,8 @@ class Graph implements IGraph, Serializable {
 		if (startVertex != null && endVertex != null) {
 			boolean success = startVertex.removeEdge(endVertex);
 			if (success) {
-				endVertex.decrementPredessors();
+//				endVertex.decrementPredessors();
+				endVertex.removeResEdge(startVertex);
 				return true;
 			} else {
 				return false;
@@ -269,7 +275,15 @@ class Graph implements IGraph, Serializable {
 		
 		//Block edges, reset augmenting path and update flow
 		listIterator = augmentingPath.listIterator();
+		//first edge
 		currentEdge = listIterator.next();
+		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {	//only normal edge possible
+			currentEdge.setBlocked(true);
+			System.out.println("Edge blocked:"+currentEdge.toString());
+		} else {
+			currentEdge.getStartVertex().setPreviousEdge();
+			System.out.println("Edge reset:"+currentEdge.toString());
+		}
 		startVertex = currentEdge.getStartVertex();
 		endVertex = currentEdge.getEndVertex();
 		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {

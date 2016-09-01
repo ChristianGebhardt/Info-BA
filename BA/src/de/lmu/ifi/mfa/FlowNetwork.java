@@ -168,30 +168,36 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	
 	public int dinic() {
 		maxFlow = 0;
-		graph.resetFlow();
-		graph.buildResidualGraph();
-		int distance = graph.buildLayeredNetwork(sourceId, sinkId);
-		int deltaFlow = 0;
-		
-		while (distance > 0) {
-			boolean pathFound = graph.searchAugmentingPath(sourceId, sinkId);
-			System.out.println("Path found: "+pathFound);
-			if(pathFound) {
-				deltaFlow = graph.updateMinFlowIncrement();
-				maxFlow += deltaFlow;
-				System.out.println("Inrease flow by "+deltaFlow);
-			} else {
-				distance = graph.buildLayeredNetwork(sourceId, sinkId);
+		if (this.getSource()>=0 && this.getSink()>=0) {
+			graph.resetFlow();
+			graph.buildResidualGraph();
+			int distance = graph.buildLayeredNetwork(sourceId, sinkId);
+			int deltaFlow = 0;
+			
+			while (distance > 0) {
+				boolean pathFound = graph.searchAugmentingPath(sourceId, sinkId);
+				System.out.println("Path found: "+pathFound);
+				if(pathFound) {
+					deltaFlow = graph.updateMinFlowIncrement();
+					maxFlow += deltaFlow;
+					System.out.println("Inrease flow by "+deltaFlow);
+				} else {
+					distance = graph.buildLayeredNetwork(sourceId, sinkId);
+				}
+				System.out.println("Distance is "+distance);
+				try {
+					Thread.sleep(1);
+				} catch (Exception ex) {}
 			}
-			System.out.println("Distance is "+distance);
-			try {
-				Thread.sleep(1);
-			} catch (Exception ex) {}
+			
+			this.prompt = "Dinic: maximum flow F="+maxFlow+".";
+			updateGraph = true;
+			drawGraph = false;
+		} else {
+			this.prompt = "Dinic: maximum flow F="+maxFlow+"."+NEWLINE+"(No valid source or sink)";
+			updateGraph = false;
+			drawGraph = false;
 		}
-		
-		this.prompt = "Dinic: maximum flow F="+maxFlow+".";
-		updateGraph = true;
-		drawGraph = false;
 		setChanged();
 	    notifyObservers();
 		return maxFlow;
@@ -199,21 +205,27 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	
 	public int goldbergTarjan() {
 		maxFlow = 0;
-		graph.resetFlow();
-		graph.buildResidualGraph();
-		graph.resetExcess(sourceId);
-		graph.initializeLabels(sourceId);
-		
-		int queueLength = graph.initialPush(sourceId, sinkId);
-		while (queueLength>0) {
-			System.out.println("Queue length: "+queueLength);
-			queueLength = graph.dischargeQueue();
+		if (this.getSource()>=0 && this.getSink()>=0) {
+			graph.resetFlow();
+			graph.buildResidualGraph();
+			graph.resetExcess(sourceId);
+			graph.initializeLabels(sourceId);
+			
+			int queueLength = graph.initialPush(sourceId, sinkId);
+			while (queueLength>0) {
+				System.out.println("Queue length: "+queueLength);
+				queueLength = graph.dischargeQueue();
+			}
+			maxFlow = graph.getOutFlow(sourceId)-graph.getInFlow(sourceId);
+			
+			this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+".";
+			updateGraph = true;
+			drawGraph = false;
+		} else {
+			this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+"."+NEWLINE+"(No valid source or sink)";
+			updateGraph = false;
+			drawGraph = false;
 		}
-		maxFlow = graph.getOutFlow(sourceId)-graph.getInFlow(sourceId);
-		
-		this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+".";
-		updateGraph = true;
-		drawGraph = false;
 		setChanged();
 	    notifyObservers();
 		return maxFlow;

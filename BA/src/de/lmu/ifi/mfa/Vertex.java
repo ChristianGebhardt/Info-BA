@@ -27,7 +27,7 @@ class Vertex implements Serializable {
 		this.label = 0;
 		this.layer = -1;
 		neighbors = new LinkedList<Edge>();
-		resNeighbors = null;
+		resNeighbors = new LinkedList<Edge>();
 		this.predessors = 0;
 		this.iteratorAugPath = 0;
 		this.deadEnd = false;
@@ -36,6 +36,15 @@ class Vertex implements Serializable {
 	protected boolean addEdge(Vertex endVertex,int capacity) {
 		if (!containsEdge(endVertex)) {
 			neighbors.add(new Edge(this,endVertex,capacity));
+			return true;
+		} else {			
+			return false;
+		}
+	}
+	
+	protected boolean addResEdge(Vertex startVertex) {
+		if (startVertex.containsEdge(this)) {
+			resNeighbors.add(startVertex.getEdge(this));
 			return true;
 		} else {			
 			return false;
@@ -57,10 +66,34 @@ class Vertex implements Serializable {
 		}
 	}
 	
+	protected boolean removeResEdge(Vertex startVertex) {
+		if (startVertex.containsEdge(this)) {
+			Edge oldEdge = startVertex.getEdge(this);
+			if (oldEdge != null) {
+				resNeighbors.remove(oldEdge);
+				return true;
+			} else {
+				return false;
+			}
+			
+		} else {			
+			return false;
+		}
+	}
+	
 	protected void removeAllEdges() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
 		while (listIterator.hasNext()) {
-			listIterator.next().getEndVertex().decrementPredessors();
+//			listIterator.next().getEndVertex().decrementPredessors();
+			listIterator.next().getEndVertex().removeResEdge(this);
+		}
+	}
+	
+	protected void removeAllResEdges() {
+		ListIterator<Edge> listIterator = resNeighbors.listIterator();
+		while (listIterator.hasNext()) {
+//			listIterator.next().getEndVertex().decrementPredessors();
+			listIterator.next().getStartVertex().removeEdge(this);
 		}
 	}
 	
@@ -305,6 +338,8 @@ class Vertex implements Serializable {
 		if (!this.isDead()) {
 			if (iteratorAugPath > 0 && iteratorAugPath <= neighbors.size()) {
 				iteratorAugPath--;
+				System.out.println(this.toString());
+				System.out.println(iteratorAugPath);
 			} else if (iteratorAugPath == -1) {
 				iteratorAugPath = neighbors.size();
 			} else if (iteratorAugPath < -1) {

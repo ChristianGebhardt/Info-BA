@@ -699,7 +699,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 		s.append("Build id: 20160831-0100" + NEWLINE);
 		s.append("(c) Copyright Chrisitan Gebhardt 2016. All rights reserved." + NEWLINE);
 		s.append("This product includes software developed by other open source projects" + NEWLINE);
-		s.append("including the  'Apache Software Foundation' and " + NEWLINE + "the 'JGraphX Swing Component - Java Graph Visualization Library'" + NEWLINE + NEWLINE);
+		s.append("including the  'Apache Software Foundation' and " + NEWLINE + "the 'JGraphX Swing Component - Java Graph Visualization Library'." + NEWLINE + NEWLINE);
 		s.append("------------------------------------------------------------------------" + NEWLINE + NEWLINE);
 		s.append("Contact Information" + NEWLINE + NEWLINE);
 		s.append("Christian Gebhardt" + NEWLINE);

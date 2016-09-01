@@ -27,6 +27,7 @@ public interface IFlowNetwork {
 	String getPrompt();
 	String displayFlowNetwork();
 	LinkedList<Integer[]> getGraphData();
+	LinkedList<Integer> getVertexIndices();
 	//Update and draw
 	void updateGraph();
 	boolean isUpdateGraph();

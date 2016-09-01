@@ -81,20 +81,24 @@ class Vertex implements Serializable {
 		}
 	}
 	
-	protected void removeAllEdges() {
+	protected boolean removeAllEdges() {
 		ListIterator<Edge> listIterator = neighbors.listIterator();
+		boolean success = true;
 		while (listIterator.hasNext()) {
 //			listIterator.next().getEndVertex().decrementPredessors();
-			listIterator.next().getEndVertex().removeResEdge(this);
+			success= success && listIterator.next().getEndVertex().removeResEdge(this);
 		}
+		return success;
 	}
 	
-	protected void removeAllResEdges() {
+	protected boolean removeAllResEdges() {
 		ListIterator<Edge> listIterator = resNeighbors.listIterator();
+		boolean success = true;
 		while (listIterator.hasNext()) {
 //			listIterator.next().getEndVertex().decrementPredessors();
-			listIterator.next().getStartVertex().removeEdge(this);
+			success= success && listIterator.next().getStartVertex().removeEdge(this);
 		}
+		return success;
 	}
 	
 	protected boolean containsEdge(int vertexId) {
@@ -399,7 +403,7 @@ class Vertex implements Serializable {
 		return s.toString();
 	}
 	
-	protected LinkedList<Integer[]> getEdgehData() {
+	protected LinkedList<Integer[]> getEdgeData() {
 		LinkedList<Integer[]> vertexEdges = new LinkedList<Integer[]>();
 		//iterate over edges
 		ListIterator<Edge> listIterator = neighbors.listIterator();

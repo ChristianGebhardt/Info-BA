@@ -27,4 +27,5 @@ interface IGraph {
 	int getOutFlow(int vertexId);
 	int getInFlow(int vertexId);
 	LinkedList<Integer[]> getGraphData();
+	LinkedList<Integer> getVertexIndices();
 }

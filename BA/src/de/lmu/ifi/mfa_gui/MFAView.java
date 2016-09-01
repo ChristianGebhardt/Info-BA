@@ -457,6 +457,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
    //Draw graph in panel
    private void drawGraph() {
 	   LinkedList<Integer[]> edges = myFlowNet.getGraphData();
+	   LinkedList<Integer> verticeIds = myFlowNet.getVertexIndices();
 	   int startId = myFlowNet.getSource();
 	   int endId = myFlowNet.getSink();
 	   vertices = new HashMap<Integer,Object>();
@@ -491,6 +492,22 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 						a = graph.insertVertex(parent, nextEdge[1]+"", nextEdge[1]+"", 0, 0, 50, 30);
 					}
 					vertices.put(nextEdge[1], a);
+				}
+			}
+			//add edgeless vertices
+			ListIterator<Integer> listIteratorV = verticeIds.listIterator();
+			Object a;
+			while (listIteratorV.hasNext()) {
+				Integer vId = listIteratorV.next();
+				if (!vertices.containsKey(vId)) {
+					if (endId == vId) {
+						a = graph.insertVertex(parent, vId+"", vId+"", 0, 0, 50, 30,"fillColor=red");
+					} else if (startId == vId) {
+						a = graph.insertVertex(parent, vId+"", vId+"", 0, 0, 50, 30,"fillColor=green");
+					} else {
+						a = graph.insertVertex(parent, vId+"", vId+"", 0, 0, 50, 30);
+					}
+					vertices.put(vId, a);
 				}
 			}
 			//add edges;

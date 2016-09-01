@@ -36,10 +36,11 @@ class Graph implements IGraph, Serializable {
 	
 	public boolean removeVertex(int id) {
 		if (vertices.containsKey(id)) {
-			vertices.get(id).removeAllEdges();
-			vertices.get(id).removeAllResEdges();
+			boolean success = true;
+			success = success && vertices.get(id).removeAllEdges();
+			success = success && vertices.get(id).removeAllResEdges();
 			vertices.remove(id);
-			return true;
+			return success;
 //			if (vertices.get(id).getPredessors() == 0) {
 //				vertices.get(id).removeAllEdges();
 //				vertices.remove(id);
@@ -336,7 +337,7 @@ class Graph implements IGraph, Serializable {
 		ListIterator<Edge> listIterator = startEdges.listIterator();
 		while (listIterator.hasNext()) {
 			Vertex newVertex = listIterator.next().pushFlowForward();
-			if (newVertex != endVertex) {
+			if (newVertex != null && newVertex != startVertex && newVertex != endVertex) {
 				queue.add(newVertex);
 			}
 		}
@@ -351,7 +352,7 @@ class Graph implements IGraph, Serializable {
 		headVertex.resetEdge();
 		while (headVertex.getExcess()>0 && !headVertex.labelIncreased()) {
 			Vertex newVertex = headVertex.push_relabel();
-			if (newVertex != null && newVertex != endVertex) {
+			if (newVertex != null && newVertex != startVertex && newVertex != endVertex) {
 				queue.add(newVertex);
 			}
 		}
@@ -388,10 +389,21 @@ class Graph implements IGraph, Serializable {
 		//iterate over vertices
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
-			graphEdges.addAll(entry.getValue().getEdgehData());
+			graphEdges.addAll(entry.getValue().getEdgeData());
         }
 		
 		return graphEdges;
+	}
+	
+	public LinkedList<Integer> getVertexIndices() {
+		LinkedList<Integer> veritecsIds = new LinkedList<Integer>();
+		//iterate over vertices
+		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
+        {
+			veritecsIds.add(entry.getValue().id());
+        }
+		
+		return veritecsIds;
 	}
 	
 	@Deprecated

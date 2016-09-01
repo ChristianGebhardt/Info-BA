@@ -105,15 +105,19 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	}
 	public void removeVertex(int vertexId, boolean draw) {
 		if (vertexId >= 0) {
-			boolean success = graph.removeVertex(vertexId);
-			if (success) {
-				if(vertexId == sourceId)
-					sourceId = -1;
-				if(vertexId == sinkId)
-					sinkId = -1;
-				prompt = "Vertex "+vertexId+" removed from Graph.";
+			if (graph.containsVertex(vertexId)) {
+				boolean success = graph.removeVertex(vertexId);
+				if (success) {
+					if(vertexId == sourceId)
+						sourceId = -1;
+					if(vertexId == sinkId)
+						sinkId = -1;
+					prompt = "Vertex "+vertexId+" removed from graph.";
+				} else {
+					prompt = "Vertex "+vertexId+" cannot be removed from graph completely.";
+				}
 			} else {
-				prompt = "Vertex "+vertexId+" cannot be removed from Graph.";
+				prompt = "Graph does not contain vertex "+vertexId+".";
 			}
 		} else {
 			prompt = "Vertex identifier has to be a valid vertex label.";
@@ -128,16 +132,24 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		addEdge(vertexId1,vertexId2,capacity,true);
 	}
 	public void addEdge(int vertexId1, int vertexId2, int capacity, boolean draw) {
-		if (vertexId1 >= 0 && vertexId2 >= 0) {
-			boolean success = graph.addEdge(vertexId1, vertexId2, capacity);
-			if (success) {
-				prompt = "Edge ("+vertexId1+","+vertexId2+") added to Graph.";
+		if (vertexId1 >= 0 && vertexId2 >= 0 && capacity>=1) {
+			if (vertexId1 != vertexId2) {
+				boolean success = graph.addEdge(vertexId1, vertexId2, capacity);
+				if (success) {
+					prompt = "Edge ("+vertexId1+","+vertexId2+") added to Graph.";
+				} else {
+					prompt = "Edge ("+vertexId1+","+vertexId2+") not added to Graph.";
+				}
 			} else {
-				prompt = "Edge ("+vertexId1+","+vertexId2+") not added to Graph.";
+				prompt = "Vertex identifiers have to be different.";
 			}
 			
+		} else if (vertexId1 < 0 || vertexId2 < 0) {
+			prompt = "Vertex identifiers have to be a valid vertex label.";
+		} else if (capacity < 1) {
+			prompt = "Capacity has to be an integer larger than zero.";
 		} else {
-			prompt = "Vertex identifiers has to be a valid vertex label.";
+			prompt = "Adding edge failed.";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -332,6 +344,10 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 
 	public LinkedList<Integer[]> getGraphData() {
 		return graph.getGraphData();
+	}
+	
+	public LinkedList<Integer> getVertexIndices() {
+		return graph.getVertexIndices();
 	}
 	
 	public void updateGraph() {

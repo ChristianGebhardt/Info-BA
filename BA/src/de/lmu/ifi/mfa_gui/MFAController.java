@@ -15,11 +15,35 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.lmu.ifi.mfa.IFlowNetwork;
 
+/**
+ *  The <tt>MFAController</tt> serves as a controller for its view {@link MFAView}.
+ *  They build an exchangeable controller-view unit in the package <tt>mfa_gui</tt>,
+ *  which can be used in an MVC-architecture for a maximum flow algorithm program.
+ *  Therefore, they use an implementation of the {@link IFlowNetwork} interface as
+ *  data model.
+ *  <p>
+ *  For additional information about the program, see <a href="https://github.com/ChristianGebhardt/mfa">MFA</a>
+ *  by Christian Gebhardt on Github.
+ *  
+ *
+ * @author  Christian Gebhardt
+ * @version 1.0.1
+ * @since   2016-09-03
+ */
 public class MFAController {
 
     private MFAView ctrlView;
     private IFlowNetwork ctrlModel;
 
+    /**
+     * The constructor creates an instance of <tt>MFAController</tt> and
+     * constructs the MVC-architecture. Therefore the constructor adds action listener
+     * to swing object of the view. This action listeners manipulate the model according to
+     * the program logic.
+     * 
+     * @param ctrlView the view of the program. 
+     * @param ctrlModel the model for the flow network of the program.
+     */
     public MFAController(MFAView ctrlView, IFlowNetwork ctrlModel){
         this.ctrlModel = ctrlModel;
         this.ctrlView = ctrlView;
@@ -41,10 +65,7 @@ public class MFAController {
         this.ctrlView.setLoadListener(new LoadListener());
     }
     
-    /**
-     * Inner listener classes implementing the interface ActionListener
-     *
-     */
+    //Inner listener classes implementing the interface ActionListener
     class AddVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int vertexId = ctrlView.getAddVertexId();

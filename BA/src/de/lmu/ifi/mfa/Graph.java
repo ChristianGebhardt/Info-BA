@@ -7,20 +7,24 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 class Graph implements IGraph, Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private static final String NEWLINE = System.getProperty("line.separator");
 	
+	//representation of the graph: list of vertices, where each vertex contains a list of adjacent vertices
+	//the map is used to have a connection from the external integer representation to the internal object representation
 	private Map<Integer,Vertex> vertices;
-	//For Dinic algorithm
+	
+	//auxiliary variable for Dinic algorithm
 	private LinkedList<Edge> augmentingPath;
-	//For Goldberg-Tarjan algorithm
+	//auxiliary variable for Goldberg-Tarjan algorithm
 	private LinkedList<Vertex>  queue;
 	private Vertex startVertex;
 	private Vertex endVertex;
 	
+	/**
+	 * Create a new graph by using an empty vertex list.
+	 */
 	public Graph() {
 		this.vertices = new LinkedHashMap<Integer,Vertex>();
 	}

@@ -4,28 +4,52 @@ import de.lmu.ifi.mfa.FlowNetwork;
 import de.lmu.ifi.mfa_gui.MFAController;
 import de.lmu.ifi.mfa_gui.MFAView;
 
+/**
+ *  The <tt>Main</tt> class contains the static function <tt>main</tt>
+ *  to launch a maximum flow algorithm program.
+ *  It uses the following two components: the network flow model, which is an
+ *  implementation of {@link FlowNetwork}, and a graphical user interfaces
+ *  comprised of a controller {@link MFAController} and its view {@link MFAView}.
+ *  <p>
+ *  The whole program is an implementation of the MVC-model.
+ *  To launch the program, the class has only three static field variables for the
+ *  three parts and the <tt>main</tt> function that instantiates and connects them.
+ *  <p>
+ *  For additional information about the program, see <a href="https://github.com/ChristianGebhardt/mfa">MFA</a>
+ *  by Christian Gebhardt on Github.
+ *  
+ *
+ * @author  Christian Gebhardt
+ * @version 1.0.1
+ * @since   2016-09-03
+ */
 public class Main {
-
+	// the model of the flow network
 	static FlowNetwork myNetwork;
+	//the controller of the view
 	static MFAController myController;
+	//the view of the program
 	static MFAView myView;
 	
+	/**
+	 * Start the program. This method instantiate the MVC-components and connects them.
+	 * 
+	 * @param args unused
+	 */
 	public static void main(String[] args) {
-		//Create Model
+		//create model
 		myNetwork = new FlowNetwork();
 		
-		//Create View
+		//create view
 		try {
 	        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");	//windows appearance
 	    } catch (Exception evt) {}
-	    // Create an instance of the test application
 	    myView = new MFAView(myNetwork);
-		myNetwork.addObserver(myView);
+		//create controller
 		myController =new MFAController(myView, myNetwork);
+		//connect observable <-> observer
+		myNetwork.addObserver(myView);
 		
-	    
-	    
-	  
 //	    myNetwork.addEdge(0,1,8,false);
 //	    myNetwork.addEdge(0,2,1,false);
 //	    myNetwork.addEdge(1,2,2,false);
@@ -40,7 +64,6 @@ public class Main {
 //	    myNetwork.setSink(5,false);
 //	    myNetwork.updateGraph();
 //	    myNetwork.drawGraph();
-
 	}
 
 }

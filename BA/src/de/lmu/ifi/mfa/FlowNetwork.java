@@ -11,6 +11,31 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Observable;
 
+/**
+ *  The <tt>FlowNetwork</tt> class is an implementation a flow network interface {@link IFlowNetwork}.
+ *  It supports the following two primary functionalities: create and manipulate a flow
+ *  network, evaluate the maximum flow on the network.
+ *  <p>
+ *  The whole functionality is based only on non-negative integer values as identifiers.
+ *  The internal data structure uses protected classes to represent a graph, vertex, or edge.
+ *  <p>
+ *  The class implements methods to add and remove vertices or edges as well as
+ *  methods to set source and sink vertex. It contains two methods that implement
+ *  Dinic's and Goldberg-Tarjan's maximum flow algorithms to compute the maximum
+ *  flow in O(n²m) and O(n³) time, respectively.
+ *  <p>
+ *  Additionally, there are methods to save and load the flow network.
+ *  Furthermore, the interface provides methods to query data about the current
+ *  state of the flow network in order to connect a graphical user interface.
+ *  <p>
+ *  For additional information, see <a href="https://github.com/ChristianGebhardt/mfa">MFA project</a>
+ *  by Christian Gebhardt on Github.
+ *  
+ *
+ * @author  Christian Gebhardt
+ * @version 1.0.1
+ * @since   2016-09-03
+ */
 public class FlowNetwork extends Observable implements IFlowNetwork, Serializable {
 	/**
 	 * 
@@ -26,7 +51,10 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	private boolean drawGraph;
 	private boolean updateGraph;
 	
-	
+	/**
+     * The constructor creates an empty flow network. Therefore, it creates an empty directed graph
+     * as internal data structure..
+	 */
 	public FlowNetwork() {
 		this.sourceId = -1;
 		this.sinkId = -1;
@@ -41,13 +69,20 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void setSource(int sourceId) {
 		setSource(sourceId,true);
 	}
+	/**
+	 * Specify a vertex to be the source of the flow network. When the vertex does not
+	 * exist, nothing happens.
+	 * 
+	 * @param sourceId the source vertex identifier. It has to be a valid identifier in the graph.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void setSource(int sourceId, boolean draw) {
 		if (sourceId >= 0) {
 			this.sourceId = sourceId;
 			graph.addVertex(sourceId);
 			prompt = "Source vertex set to be vertex "+sourceId+".";
 		} else {
-			prompt = "Source identifier has to be a valid vertex label.";
+			prompt = "Source identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -62,13 +97,20 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void setSink(int sinkId) {
 		setSink(sinkId,true);
 	}
+	/**
+	 * Specify a vertex to be the sink of the flow network. When the vertex does not
+	 * exist, nothing happens.
+	 * 
+	 * @param sinkId the sink vertex identifier. It has to be a valid identifier in the graph.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void setSink(int sinkId, boolean draw) {
 		if (sinkId >= 0) {
 			this.sinkId = sinkId;
 			graph.addVertex(sinkId);
 			prompt = "Sink vertex set to be vertex "+sinkId+".";
 		} else {
-			prompt = "Sink identifier has to be a valid vertex label.";
+			prompt = "Sink identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -83,6 +125,14 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void addVertex(int vertexId) {
 		addVertex(vertexId,true);
 	}
+	/**
+	 * Add a vertex to the graph of the flow network. When the vertex already
+	 * exists, nothing happens.
+	 * 
+	 * @param vertexId the vertex identifier. It has to be non-negative
+	 * 				   integer, otherwise it shows a failure message.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void addVertex(int vertexId, boolean draw) {
 		if (vertexId >= 0) {
 			boolean success = graph.addVertex(vertexId);
@@ -92,7 +142,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 				prompt = "Vertex "+vertexId+" already exists in Graph.";
 			}
 		} else {
-			prompt = "Vertex identifier has to be a valid vertex label.";
+			prompt = "Vertex identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -103,6 +153,14 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void removeVertex(int vertexId) {
 		removeVertex(vertexId,true);
 	}
+	/**
+	 * Remove a vertex from the graph of the flow network. When the vertex has incoming
+	 * and outgoing edges, all the adjacent edges are also removed.
+	 * 
+	 * @param vertexId the vertex identifier. It has to be non-negative
+	 * 				   integer that exists in the graph, otherwise it shows a failure message.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void removeVertex(int vertexId, boolean draw) {
 		if (vertexId >= 0) {
 			if (graph.containsVertex(vertexId)) {
@@ -120,7 +178,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 				prompt = "Graph does not contain vertex "+vertexId+".";
 			}
 		} else {
-			prompt = "Vertex identifier has to be a valid vertex label.";
+			prompt = "Vertex identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -131,6 +189,14 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void addEdge(int vertexId1, int vertexId2, int capacity) {
 		addEdge(vertexId1,vertexId2,capacity,true);
 	}
+	/**
+	 * Add an edge to the graph of the flow network. When the edge already exists, nothing happens.
+	 * 
+	 * @param vertexId1 the start vertex identifier of the edge. When the vertex not already exists, it is added to the graph.
+	 * @param vertexId2 the end vertex identifier of the edge. When the vertex not already exists, it is added to the graph.
+	 * @param capacity the maximum flow capacity of the edge. It has to be a positive integer, otherwise it shows a failure message.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void addEdge(int vertexId1, int vertexId2, int capacity, boolean draw) {
 		if (vertexId1 >= 0 && vertexId2 >= 0 && capacity>=1) {
 			if (vertexId1 != vertexId2) {
@@ -145,9 +211,9 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 			}
 			
 		} else if (vertexId1 < 0 || vertexId2 < 0) {
-			prompt = "Vertex identifiers have to be a valid vertex label.";
+			prompt = "Vertex identifiers have to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		} else if (capacity < 1) {
-			prompt = "Capacity has to be an integer larger than zero.";
+			prompt = "Capacity has to be an integer larger than zero."+NEWLINE+"(use a positive integer: 1,2,3,4,...)";
 		} else {
 			prompt = "Adding edge failed.";
 		}
@@ -160,6 +226,14 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	public void removeEdge(int vertexId1, int vertexId2) {
 		removeEdge(vertexId1,vertexId2,true);
 	}
+	/**
+	 * Remove an edge from the graph of the flow network. The adjacent
+	 * vertices are untouched. When the edge does not exists, nothing happens. 
+	 * 
+	 * @param vertexId1 the start vertex identifier of the edge.
+	 * @param vertexId2 the end vertex identifier of the edge.
+	 * @param draw flag to update and redraw the graph.
+	 */
 	public void removeEdge(int vertexId1, int vertexId2, boolean draw) {
 		if (vertexId1 >= 0 && vertexId2 >= 0) {
 			boolean success = graph.removeEdge(vertexId1, vertexId2);
@@ -170,7 +244,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 			}
 			
 		} else {
-			prompt = "Vertex identifiers have to be a valid vertex label.";
+			prompt = "Vertex identifiers have to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
 		updateGraph = draw;
 		drawGraph = draw;
@@ -311,12 +385,6 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		return prompt;
 	}
 	
-	/**
-     * Returns a string representation of this graph.
-     *
-     * @return the source vertex <em>s</em>, followed by the sink vertex <em>t</em>,
-     *         followed by all the vertices and their adjacency lists
-     */
 	public String displayFlowNetwork() {
 		StringBuilder s = new StringBuilder();
 		s.append("FLOW NETWORK" + NEWLINE);

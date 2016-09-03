@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-public class FlowNetworkTest {
+class FlowNetworkTest {
 
 	@Test
 	public void exampleNet() {

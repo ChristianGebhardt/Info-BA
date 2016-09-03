@@ -26,14 +26,12 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxGeometry;
@@ -43,11 +41,25 @@ import com.mxgraph.view.mxGraph;
 
 import de.lmu.ifi.mfa.IFlowNetwork;
 
+/**
+ *  The <tt>MFAView</tt> class is the view of a maximum flow algorithm program. 
+ *  It is connected to a controller {@link MFAController}, that evaluates and forwards
+ *  the user input to the flow network model {@link IFlowNetwork}. 
+ *  The view and the controller build an exchangeable controller-view unit in the package <tt>mfa_gui</tt>.
+ *  <p>
+ *  The <tt>MFAView</tt> class is an implementation of {@link Observer}, which has to be attached to the model.
+ *  This allows the retrieve update information and query the current status of the flow network from the model
+ *  <p>
+ *  For additional information about the program, see <a href="https://github.com/ChristianGebhardt/mfa">MFA</a>
+ *  by Christian Gebhardt on Github.
+ *  
+ *
+ * @author  Christian Gebhardt
+ * @version 1.0.1
+ * @since   2016-09-03
+ */
 public class MFAView extends JFrame implements Observer, ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static final String NEWLINE = System.getProperty("line.separator");
 
@@ -107,6 +119,13 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	private static final int MIN_WIDTH = 1600;
 	private static final int MIN_HEIGHT = 800;
 	
+    /**
+     * The constructor uses the flow network {@link IFlowNetwork} as observable to create a
+     * view for this model. Therefore, the constructor packs all necessary swing
+     * object on the a frame displays it as view of the program.
+     *  
+     * @param flowNet the model for the flow network of the program.
+     */
     public MFAView(IFlowNetwork flowNet) {
     	//Model
     	this.myFlowNet = flowNet;
@@ -431,6 +450,8 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	}
    
    //Implement update reaction
+   //TODO search for writing doc comments for overwritten functions
+   
    public void update(Observable obs, Object obj) {
       if (obs == myFlowNet)
       {
@@ -663,6 +684,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
    }
 
 	@Override
+	//TODO search for writing doc comments for overwritten functions
 	public void actionPerformed(ActionEvent object) {
 		if (object.getSource() == help){
 	        final JDialog frame = new JDialog(this, "Help Contents", true);

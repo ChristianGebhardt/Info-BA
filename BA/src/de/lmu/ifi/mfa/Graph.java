@@ -6,6 +6,25 @@ import java.util.Map;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+/**
+ *  The <tt>Graph</tt> class is an implementation a graph interface {@link IGraph}.
+ *  It supports the following two primary functionalities: create and manipulate a graph
+ *  morphology, provide auxiliary functions for maximum flow algorithms.
+ *  <p>
+ *  The whole parameter and return values are based only on integer values as vertex identifiers.
+ *  The internal data structure uses protected classes of vertices and edges.
+ *  <p>
+ *  Furthermore, the interface provides methods to query data about the current
+ *  state of the graph in order to make the graph data available.
+ *  <p>
+ *  For additional information, see <a href="https://github.com/ChristianGebhardt/mfa">MFA project</a>
+ *  by Christian Gebhardt on Github.
+ *  
+ *
+ * @author  Christian Gebhardt
+ * @version 1.0.1
+ * @since   2016-09-03
+ */
 class Graph implements IGraph, Serializable {
 
 	private static final long serialVersionUID = 1L;

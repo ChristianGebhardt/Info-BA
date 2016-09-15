@@ -116,7 +116,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
     JMenuItem about;
 	
 	//Screen
-	private static final int MIN_WIDTH = 1600;
+	private static final int MIN_WIDTH = 1200;
 	private static final int MIN_HEIGHT = 800;
 	
     /**
@@ -343,8 +343,8 @@ public class MFAView extends JFrame implements Observer, ActionListener {
     private void createPanel2(){
         panel2 = new JPanel();
         panel2.setLayout(new BorderLayout());
-        panel2.setPreferredSize( new Dimension(1000, 700));
-        panel2.setMinimumSize( new Dimension(1000, 600));
+        panel2.setPreferredSize( new Dimension(600, 700));
+        panel2.setMinimumSize( new Dimension(600, 600));
 
         // Create Sub-Panels
         JPanel outputMask = new JPanel();
@@ -356,7 +356,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         txtDisplay = new JTextArea();
         txtDisplay.setText(helpMessage());
         JScrollPane txtOutputPanel = new JScrollPane(txtDisplay);	//initial help (might be removed again)
-        txtOutputPanel.setPreferredSize(new Dimension(1000, 250));
+        txtOutputPanel.setPreferredSize(new Dimension(600, 250));
         outputMask.add(txtOutputPanel);
         outputMask.add(Box.createRigidArea(new Dimension(0,10)));
         //Graphic area
@@ -369,7 +369,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         graph = new mxGraph();
         graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension( 1000, 350 ));
+        graphComponent.setPreferredSize(new Dimension( 600, 350 ));
         graphComponent.setEnabled(false);		//no moving of vertices/edge
         graphComponent.setConnectable(false);	//no connection of vertices
         graphPanel.add(graphComponent, BorderLayout.CENTER);

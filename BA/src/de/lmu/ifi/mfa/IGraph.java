@@ -25,9 +25,9 @@ import java.util.LinkedList;
  */
 interface IGraph {
 
-	/*********************************************
+	/*********************************************************
 	 * Vertex
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Add new vertex to the graph. Nothing happens, when the vertex already exists.
 	 * 
@@ -52,9 +52,9 @@ interface IGraph {
 	 */
 	boolean containsVertex(int vertexId);
 
-	/*********************************************
+	/*********************************************************
 	 * Edge
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Add an edge to the graph of the flow network. When the edge already exists, nothing happens.
 	 * 
@@ -75,9 +75,9 @@ interface IGraph {
 	 */
 	boolean removeEdge(int vertexId1, int vertexId2);
 	
-	/*********************************************
+	/*********************************************************
 	 * Auxiliary functions (for maximum flow algorithms)
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Reset the flow on the whole graph. The method sets the flow to zero for
 	 * each individual edge.
@@ -110,9 +110,9 @@ interface IGraph {
 	 */
 	void buildResidualGraph();
 	
-	/*********************************************
+	/*********************************************************
 	 * Dinic algorithm functions
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Build a layered network of a flow network. This method assigns the layer
 	 * number to each vertex in the graph. The layered network is built in place withing
@@ -144,9 +144,9 @@ interface IGraph {
 	 */
 	int updateMinFlowIncrement();
 
-	/*********************************************
+	/*********************************************************
 	 * Goldberg-Tarjan algorithm functions
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Initial push to start the push-relabel algorithm. This method pushes the maximum flow from the source
 	 * vertex to all its neighbors. The neighbors are added to the queue of active vertices, except of the sink vertex.
@@ -166,9 +166,9 @@ interface IGraph {
 	 */
 	int dischargeQueue();
 	
-	/*********************************************
+	/*********************************************************
 	 * Get information about the graph and its flow
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Calculate and return the outgoing flow of a vertex. This method iterates through all outgoing edges and sums up
 	 * the total outgoing flow.
@@ -186,6 +186,15 @@ interface IGraph {
 	 * @return the incoming flow of the vertex.
 	 */
 	int getInFlow(int vertexId);
+	
+	/**
+	 * Get the graph data in form of a text based format. This method returns a String that contains a  list of
+	 *  all adjacent lists.
+	 * Each adjacent list is represented through the edges of the form <tt>(start vertex id,end vertex id,c:capacity,f:flow)</tt>
+	 * 
+	 * @return the list of all edges as integer array.
+	 */
+	String graphToString();
 	
 	/**
 	 * Get the graph data in form of an edge list. This method returns a list of all edges as integer array.

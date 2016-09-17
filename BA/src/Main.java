@@ -24,11 +24,17 @@ import de.lmu.ifi.mfa_gui.MFAView;
  * @since   2016-09-03
  */
 public class Main {
-	// the model of the flow network
+	/**
+	 * The model of the flow network.
+	 */
 	static FlowNetwork myNetwork;
-	//the controller of the view
+	/**
+	 * The controller of the view.
+	 */
 	static MFAController myController;
-	//the view of the program
+	/**
+	 * The view of the program.
+	 */
 	static MFAView myView;
 	
 	/**
@@ -38,8 +44,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		//create model
-		myNetwork = new FlowNetwork();
-		
+		myNetwork = new FlowNetwork();		
 		//create view
 		try {
 	        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");	//windows appearance
@@ -49,21 +54,6 @@ public class Main {
 		myController =new MFAController(myView, myNetwork);
 		//connect observable <-> observer
 		myNetwork.addObserver(myView);
-		
-//	    myNetwork.addEdge(0,1,8,false);
-//	    myNetwork.addEdge(0,2,1,false);
-//	    myNetwork.addEdge(1,2,2,false);
-//	    myNetwork.addEdge(1,3,4,false);
-//	    myNetwork.addEdge(1,4,1,false);
-//	    myNetwork.addEdge(2,4,4,false);
-//	    myNetwork.addEdge(2,5,1,false);
-//	    myNetwork.addEdge(3,2,1,false);
-//	    myNetwork.addEdge(3,5,2,false);
-//	    myNetwork.addEdge(4,5,6,false);
-//	    myNetwork.setSource(0,false);
-//	    myNetwork.setSink(5,false);
-//	    myNetwork.updateGraph();
-//	    myNetwork.drawGraph();
 	}
-
+	
 }

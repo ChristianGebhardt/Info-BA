@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-class FlowNetworkTest {
+public class FlowNetworkTest {
 
 	@Test
 	public void exampleNet() {
@@ -28,18 +28,21 @@ class FlowNetworkTest {
 	
 	@Test
 	public void testAddEdge() {
+		//three different edges
 		FlowNetwork testNetwork = new FlowNetwork();
 		testNetwork.addEdge(0,1,1,false);
 		testNetwork.addEdge(1,2,1,false);
 		testNetwork.addEdge(2,3,1,false);
 		assertEquals(3, testNetwork.getGraphData().size());
 		
+		//two equal edges
 		testNetwork = new FlowNetwork();
 		testNetwork.addEdge(0,1,1,false);
 		testNetwork.addEdge(1,2,1,false);
 		testNetwork.addEdge(1,2,1,false);
 		assertEquals(2, testNetwork.getGraphData().size());
 		
+		//edge to the same vertex
 		testNetwork = new FlowNetwork();
 		testNetwork.addEdge(0,1,1,false);
 		testNetwork.addEdge(1,2,1,false);
@@ -47,4 +50,29 @@ class FlowNetworkTest {
 		assertEquals(2, testNetwork.getGraphData().size());
 	}
 
+	
+	@Test
+	public void testDinic() {
+		//circle in network
+		FlowNetwork testNetwork = new FlowNetwork();
+		testNetwork.addEdge(0,1,3,false);
+		testNetwork.addEdge(1,2,3,false);
+		testNetwork.addEdge(1,0,1,false);
+		testNetwork.addEdge(2,1,1,false);
+		testNetwork.setSource(0,false);
+	    testNetwork.setSink(2,false);
+		assertEquals(3, testNetwork.dinic());
+		
+		testNetwork = new FlowNetwork();
+		testNetwork.addEdge(0,1,3,false);
+		testNetwork.addEdge(2,1,1,false);
+		testNetwork.setSource(0,false);
+	    testNetwork.setSink(1,false);
+		assertEquals(3, testNetwork.dinic());
+	}
+	
+	
+	private FlowNetwork getBigNetwork() {
+		return null;
+	}
 }

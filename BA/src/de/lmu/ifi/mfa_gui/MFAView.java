@@ -60,23 +60,26 @@ import de.lmu.ifi.mfa.IFlowNetwork;
  */
 public class MFAView extends JFrame implements Observer, ActionListener {
 
+	//constant values
 	private static final long serialVersionUID = 1L;
 	private static final String NEWLINE = System.getProperty("line.separator");
 
+	//main variables
 	private IFlowNetwork myFlowNet = null;
 
+	//complex swing components
 	private     JSplitPane  splitPaneH;
 	private     JSplitPane  splitPaneV;
 	private     JPanel      panel1a;
 	private     JPanel      panel1b;
 	private     JPanel      panel2;
 
-	//Vertex
+	//vertex
 	private JTextField txtAddVertexId;
 	private JTextField txtRemoveVertexId;
 	private JButton cmdAddV;
 	private JButton cmdRemoveV;
-	//Edge
+	//edge
 	private JTextField txtAddEdgeId1;
 	private JTextField txtAddEdgeId2;
 	private JTextField txtAddEdgeCap;
@@ -85,22 +88,22 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	private JButton cmdAddE;
 	private JButton cmdRemoveE;
 	
-	//Source/Sink
+	//source/sink
 	private JTextField txtSourceId;
 	private JTextField txtSinkId;
 	private JButton cmdSetSource;
 	private JButton cmdSetSink;
 	
-	//Evaluate
+	//evaluate
 	private JButton cmdDinic;
 	private JButton cmdGoldberg;
 	
-	//Evaluate
+	//control
 	private JButton cmdReset;
 	private JButton cmdSave;
 	private JButton cmdLoad;
 	
-	//Information
+	//output
 	private JTextArea txtPrompt;
 	private JTextArea txtDisplay;
 	
@@ -109,13 +112,13 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	private mxGraphComponent graphComponent;
 	private Map<Integer,Object> vertices;
 	
-	//Menu
+	//menu
 	JMenuBar menuBar;
 	JMenu info;
 	JMenuItem help;
     JMenuItem about;
 	
-	//Screen
+	//screen constants
 	private static final int MIN_WIDTH = 1200;
 	private static final int MIN_HEIGHT = 800;
 	
@@ -140,7 +143,6 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         menuBar.add(info);
         URL urlHelp = MFAView.class.getResource("/resources/questionmark16.png");
 		ImageIcon helpIcon = new ImageIcon(urlHelp);
-//        UIManager.getIcon(	"OptionPane.questionIcon")
         help = new JMenuItem("Help Contents", helpIcon);
         help.addActionListener(this);
         URL urlAbout = MFAView.class.getResource("/resources/lmu16.gif");
@@ -151,7 +153,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         info.add(about);
         add(menuBar, BorderLayout.NORTH);
         
-        //Scrennsize
+        //Screen size
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         if (dim.getWidth()<MIN_WIDTH || dim.getHeight()<MIN_HEIGHT) {
         	setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
@@ -339,7 +341,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         panel1b.add(txtPrompt, BorderLayout.CENTER);
     }
 
-    //Display field
+    //Create the display field (text field and graphical network representation)
     private void createPanel2(){
         panel2 = new JPanel();
         panel2.setLayout(new BorderLayout());
@@ -362,53 +364,32 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         //Graphic area
         JPanel graphPanel = new JPanel();
         graphPanel.setLayout(new BorderLayout());
-//        graphPanel.setLayout(new GridBagLayout());
         graphPanel.setOpaque(true);
         graphPanel.setBackground(Color.WHITE);
         graphPanel.setBorder(BorderFactory.createTitledBorder("Visualization"));
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Graph (
         graph = new mxGraph();
         graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension( 600, 350 ));
+        graphComponent.setPreferredSize(new Dimension(600, 350));
         graphComponent.setEnabled(false);		//no moving of vertices/edge
         graphComponent.setConnectable(false);	//no connection of vertices
         graphPanel.add(graphComponent, BorderLayout.CENTER);
-//        graphPanel.add(graphComponent, new GridBagConstraints());
-//        Object parent = graph.getDefaultParent();
-//        graph.getModel().beginUpdate();
 //        try {
-//                Object start = graph.insertVertex(parent, "start", "start", 100,
-//                                100, 80, 30);
-//                for (int i = 0; i < 5; i++) {
-//                        Object a = graph.insertVertex(parent, "A" + i, "A" + i, 100,
-//                                        100, 80, 30);
-//                        graph.insertEdge(parent, null, "E" + i, start, a);
-//
-//                        Object b = graph.insertVertex(parent, "B" + i, "B" + i, 100,
-//                                        100, 80, 30);
-//                        graph.insertEdge(parent, null, "E" + i, a, b);
-//                        start = a;
-//                }
-//        } finally {
-//                graph.getModel().endUpdate();
-//        }
-//        morphGraph(graph, graphComponent);
-        try {
-			Thread.sleep(1);		//might be neclected
-		} catch (Exception ex) {}
+//			Thread.sleep(1);		//might be neclected
+//		} catch (Exception ex) {}
         this.revalidate();
         this.repaint();
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         outputMask.add(graphPanel);
         outputMask.add(Box.createRigidArea(new Dimension(0,25)));
         
+        //Add everything
         panel2.add( new JLabel( "Display:" ), BorderLayout.NORTH );
         panel2.add(outputMask, BorderLayout.CENTER);
     }
 
+    //rearrange the graph morphology automatically by using a predefined layout
     private void morphGraph(mxGraph graph, mxGraphComponent graphComponent) {
 	    // define layout
-//	    mxIGraphLayout layout = new mxFastOrganicLayout(graph);
     	mxHierarchicalLayout layout = new  mxHierarchicalLayout(graph);
     	layout.setOrientation(SwingConstants.WEST);
 	    // layout using morphing
@@ -431,17 +412,14 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 //	            morph.startAnimation();
 	    	graph.getModel().endUpdate();
 	    	
-	    	//Before you add a vertex/edge to graph, get the size of layout
+	    	
+	    	//get the size of layout
 	        double widthLayout = graphComponent.getLayoutAreaSize().getWidth();
 	        double heightLayout = graphComponent.getLayoutAreaSize().getHeight();
-
-	        //if you are done with adding vertices/edges,
 	        //we need to determine the size of the graph
-
 	        double width = graph.getGraphBounds().getWidth();
 	        double height = graph.getGraphBounds().getHeight();
-
-	        //set new geometry
+	        //set new geometry to set the graph in the center
 	        graph.getModel().setGeometry(graph.getDefaultParent(), 
 	                new mxGeometry((widthLayout - width)/2, (heightLayout - height)/2,
 	                        widthLayout, heightLayout));
@@ -449,33 +427,30 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	
 	}
    
-   //Implement update reaction
-   //TODO search for writing doc comments for overwritten functions
-   
+   /**
+    * Update the output message as well as the textual and graphical network representation.
+    * This method is called by the model (observable), when the status or the morphology of
+    * the flow network has changed.
+    */
    public void update(Observable obs, Object obj) {
       if (obs == myFlowNet)
       {
          System.out.println(myFlowNet.getPrompt());
          if (myFlowNet.isUpdateGraph()) {
 	         this.txtDisplay.setText(myFlowNet.displayFlowNetwork());
-	         this.txtDisplay.setSelectionStart(0);	//Go to top of text area
+	         this.txtDisplay.setSelectionStart(0);	//Go to the top of text area
 	         this.txtDisplay.setSelectionEnd(0); 
 	         this.updateGraph();
          }
          //display graph
          if (myFlowNet.isDrawGraph()) {
 	         this.drawGraph();
-//	         try {
-//	 			Thread.sleep(500);
-//	 		 } catch (Exception ex) {}
-//	         this.revalidate();
-//	         this.repaint();
          }
          this.txtPrompt.setText(myFlowNet.getPrompt());
       }
    }
    
-   //Draw graph in panel
+   //draw graph in panel new
    private void drawGraph() {
 	   LinkedList<Integer[]> edges = myFlowNet.getGraphData();
 	   LinkedList<Integer> verticeIds = myFlowNet.getVertexIndices();
@@ -487,12 +462,12 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   
 	   graph.getModel().beginUpdate();
 	   try {
-		   //add vertices;
+		   //add vertices with edges
 		   Object parent = graph.getDefaultParent();
 		   ListIterator<Integer[]> listIterator = edges.listIterator();
 			while (listIterator.hasNext()) {
 				Integer[] nextEdge = listIterator.next();
-				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[0])) {
+				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[0])) {	//add start vertex of edge
 					Object a;
 					if (startId == nextEdge[0]) {
 						a = graph.insertVertex(parent, nextEdge[0]+"", nextEdge[0]+"", 0, 0, 50, 30,"fillColor=green");
@@ -503,7 +478,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 					}
 					vertices.put(nextEdge[0], a);
 				}
-				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[1])) {
+				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[1])) {	//add end vertex of edge
 					Object a;
 					if (endId == nextEdge[1]) {
 						a = graph.insertVertex(parent, nextEdge[1]+"", nextEdge[1]+"", 0, 0, 50, 30,"fillColor=red");
@@ -515,7 +490,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 					vertices.put(nextEdge[1], a);
 				}
 			}
-			//add edgeless vertices
+			//add vertices without edges
 			ListIterator<Integer> listIteratorV = verticeIds.listIterator();
 			Object a;
 			while (listIteratorV.hasNext()) {
@@ -548,11 +523,10 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   morphGraph(graph, graphComponent);
    }
    
- //Draw graph in panel
+   //update edges and edge labels in graph (without redrawing the graph)
    private void updateGraph() {
 	   if (vertices != null) {
 		   LinkedList<Integer[]> edges = myFlowNet.getGraphData();
-		   System.out.println("UPDATE GRAPH");   
 		   graph.getModel().beginUpdate();
 		   try {
 			   //remove edge and add again;
@@ -561,7 +535,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 				while (listIterator.hasNext()) {
 					Integer[] nextEdge = listIterator.next();
 					if (nextEdge.length > 0 && vertices.containsKey(nextEdge[0]) && vertices.containsKey(nextEdge[1])) {
-						Object[] edgeList = graph.getEdgesBetween(vertices.get(nextEdge[0]), vertices.get(nextEdge[1]));
+						Object[] edgeList = graph.getEdgesBetween(vertices.get(nextEdge[0]), vertices.get(nextEdge[1]),true);
 						if (edgeList.length > 0) {
 							((mxGraphModel) graph.getModel()).remove(edgeList[0]);
 							graph.removeCells(edgeList);
@@ -618,7 +592,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
    }
    
    
-   //return input values
+   //return input values from text fields
    protected int getAddVertexId() {
 	   try {
 		   return Integer.parseInt(this.txtAddVertexId.getText());
@@ -683,10 +657,15 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   }
    }
 
-	@Override
-	//TODO search for writing doc comments for overwritten functions
+	/**
+	 * Action listener for the menu items. This method opens the windows for the help and about
+	 * message, when the related menu item is pressed.
+	 * 
+	 * @param object the action event of the menu item.
+	 */
+    @Override
 	public void actionPerformed(ActionEvent object) {
-		if (object.getSource() == help){
+		if (object.getSource() == help){	//show help window
 	        final JDialog frame = new JDialog(this, "Help Contents", true);
 	        JTextArea helpText = new JTextArea(10,100);
 	        String helpMsg = helpMessage();
@@ -697,7 +676,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	        frame.setLocationRelativeTo(null);
 	        frame.setVisible(true);
 	   }
-	   if (object.getSource() == about){
+	   if (object.getSource() == about){	//show about window
 	        final JDialog frame = new JDialog(this, "About MFA", true);
 	        JTextArea helpText = new JTextArea(10,80);
 	        String aboutMsg = aboutMessage();
@@ -710,6 +689,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   }	
 	}
    
+	//create help message to show in the help window (and at the program start)
 	private String helpMessage() {
 		StringBuilder s = new StringBuilder();
 		s.append("Getting Started" + NEWLINE);
@@ -731,6 +711,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 		return s.toString();
 	}
 	
+	//create about message to show in the about window
 	private String aboutMessage() {
 		StringBuilder s = new StringBuilder();
 		s.append("Maximum Flow Algorithm Application" + NEWLINE + NEWLINE);
@@ -740,6 +721,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 		s.append("This product includes software developed by other open source projects" + NEWLINE);
 		s.append("including the  'Apache Software Foundation' and " + NEWLINE + "the 'JGraphX Swing Component - Java Graph Visualization Library'." + NEWLINE + NEWLINE);
 		s.append("------------------------------------------------------------------------" + NEWLINE + NEWLINE);
+		
 		s.append("Contact Information" + NEWLINE + NEWLINE);
 		s.append("Christian Gebhardt" + NEWLINE);
 		s.append("Ludwigs-Maximilians-Universität München" + NEWLINE);

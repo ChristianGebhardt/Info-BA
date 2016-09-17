@@ -37,23 +37,24 @@ import java.util.Observable;
  * @since   2016-09-03
  */
 public class FlowNetwork extends Observable implements IFlowNetwork, Serializable {
-	/**
-	 * 
-	 */
+
+	//constant values
 	private static final long serialVersionUID = 1L;
 	private static final String NEWLINE = System.getProperty("line.separator");
 	
+	//main variables
 	private int sourceId;
 	private int sinkId;
 	private Graph graph;
 	private int maxFlow;
+	//variables for view
 	private String prompt;
 	private boolean drawGraph;
 	private boolean updateGraph;
 	
 	/**
      * The constructor creates an empty flow network. Therefore, it creates an empty directed graph
-     * as internal data structure..
+     * as internal data structure and it assigns default values to all variables.
 	 */
 	public FlowNetwork() {
 		this.sourceId = -1;
@@ -65,7 +66,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		this.updateGraph = false;
 	}
 	
-	
+	//commented in interface
 	public void setSource(int sourceId) {
 		setSource(sourceId,true);
 	}
@@ -78,9 +79,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	 */
 	public void setSource(int sourceId, boolean draw) {
 		if (sourceId >= 0) {
-			this.sourceId = sourceId;
-			graph.addVertex(sourceId);
-			prompt = "Source vertex set to be vertex "+sourceId+".";
+			if (sourceId != this.sinkId) {
+				this.sourceId = sourceId;
+				graph.addVertex(sourceId);
+				prompt = "Source vertex set to be vertex "+sourceId+".";
+			} else {
+				this.sourceId = sourceId;
+				graph.addVertex(sourceId);
+				this.sinkId = -1;
+				prompt = "Source vertex set to be vertex "+sourceId+"."+NEWLINE+"Source and sink vertex have to be different.";
+			}
 		} else {
 			prompt = "Source identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
@@ -90,10 +98,12 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();	
 	}
 	
+	//commented in interface
 	public int getSource() {
 		return sourceId;
 	}
 	
+	//commented in interface
 	public void setSink(int sinkId) {
 		setSink(sinkId,true);
 	}
@@ -106,9 +116,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	 */
 	public void setSink(int sinkId, boolean draw) {
 		if (sinkId >= 0) {
-			this.sinkId = sinkId;
-			graph.addVertex(sinkId);
-			prompt = "Sink vertex set to be vertex "+sinkId+".";
+			if (sinkId != this.sourceId) {
+				this.sinkId = sinkId;
+				graph.addVertex(sinkId);
+				prompt = "Sink vertex set to be vertex "+sinkId+".";
+			} else {
+				this.sinkId = sinkId;
+				graph.addVertex(sinkId);
+				this.sourceId = -1;
+				prompt = "Sink vertex set to be vertex "+sinkId+"."+NEWLINE+"Source and sink vertex have to be different.";
+			}
 		} else {
 			prompt = "Sink identifier has to be a valid vertex label."+NEWLINE+"(use a non-negative integer: 0,1,2,3,...)";
 		}
@@ -118,10 +135,12 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();	
 	}
 	
+	//commented in interface
 	public int getSink() {
 		return sinkId;
 	}
 	
+	//commented in interface
 	public void addVertex(int vertexId) {
 		addVertex(vertexId,true);
 	}
@@ -150,6 +169,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void removeVertex(int vertexId) {
 		removeVertex(vertexId,true);
 	}
@@ -186,6 +206,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void addEdge(int vertexId1, int vertexId2, int capacity) {
 		addEdge(vertexId1,vertexId2,capacity,true);
 	}
@@ -223,6 +244,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void removeEdge(int vertexId1, int vertexId2) {
 		removeEdge(vertexId1,vertexId2,true);
 	}
@@ -252,14 +274,16 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public int dinic() {
 		maxFlow = 0;
 		if (this.getSource()>=0 && this.getSink()>=0) {
+			//initialize
 			graph.resetFlow();
 			graph.buildResidualGraph();
 			int distance = graph.buildLayeredNetwork(sourceId, sinkId);
 			int deltaFlow = 0;
-			
+			//main loop
 			while (distance > 0) {
 				boolean pathFound = graph.searchAugmentingPath(sourceId, sinkId);
 				System.out.println("Path found: "+pathFound);
@@ -275,7 +299,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 					Thread.sleep(1);
 				} catch (Exception ex) {}
 			}
-			
+			//return output to observers
 			this.prompt = "Dinic: maximum flow F="+maxFlow+".";
 			updateGraph = true;
 			drawGraph = false;
@@ -289,21 +313,23 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		return maxFlow;
 	}
 	
+	//commented in interface
 	public int goldbergTarjan() {
 		maxFlow = 0;
 		if (this.getSource()>=0 && this.getSink()>=0) {
+			//initialize
 			graph.resetFlow();
 			graph.buildResidualGraph();
 			graph.resetExcess(sourceId);
 			graph.initializeLabels(sourceId);
-			
 			int queueLength = graph.initialPush(sourceId, sinkId);
+			//main loop
 			while (queueLength>0) {
 				System.out.println("Queue length: "+queueLength);
 				queueLength = graph.dischargeQueue();
 			}
 			maxFlow = graph.getOutFlow(sourceId)-graph.getInFlow(sourceId);
-			
+			//return output to observers
 			this.prompt = "Goldberg-Tarjan: maximum flow F="+maxFlow+".";
 			updateGraph = true;
 			drawGraph = false;
@@ -317,6 +343,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		return maxFlow;
 	}
 	
+	@Deprecated
 	public void clearFlow() {
 		this.prompt = "Function not implemented yet.";
 		updateGraph = true;
@@ -325,6 +352,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void resetNetwork() {
 		this.sourceId = -1;
 		this.sinkId = -1;
@@ -337,6 +365,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void loadNetwork(File file) {
 		try {
             FileInputStream fis = new FileInputStream(file);
@@ -344,6 +373,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
             FlowNetwork loadNetwork = (FlowNetwork)ois.readObject();
             ois.close();
             fis.close();
+            //updated the variables with the loaded data
             this.sourceId = loadNetwork.sourceId;
     		this.sinkId = loadNetwork.sinkId;
     		this.graph = loadNetwork.graph;
@@ -362,6 +392,7 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public void saveNetwork(File file) {
 		try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -381,12 +412,15 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public String getPrompt() {
 		return prompt;
 	}
 	
+	//commented in interface
 	public String displayFlowNetwork() {
 		StringBuilder s = new StringBuilder();
+		//build string with basic information (source, sink, total flow)
 		s.append("FLOW NETWORK" + NEWLINE);
 		s.append("============" + NEWLINE);
 		if (this.sourceId >= 0) {
@@ -405,19 +439,23 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 			s.append("Maximum flow: -" + NEWLINE);
 		}
         s.append("---------------------------------------------------------------"+NEWLINE);
-        s.append(graph.toString());
+        //append string representation of the graph as adjacent lists
+        s.append(graph.graphToString());
         
         return s.toString();
 	}
 
+	//commented in interface
 	public LinkedList<Integer[]> getGraphData() {
 		return graph.getGraphData();
 	}
 	
+	//commented in interface
 	public LinkedList<Integer> getVertexIndices() {
 		return graph.getVertexIndices();
 	}
 	
+	//commented in interface
 	public void updateGraph() {
 		updateGraph = true;
 		drawGraph = false;
@@ -425,10 +463,12 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public boolean isUpdateGraph() {
 		return updateGraph;
 	}
 	
+	//commented in interface
 	public void drawGraph() {
 		updateGraph = true;
 		drawGraph = true;
@@ -436,12 +476,9 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 	    notifyObservers();
 	}
 	
+	//commented in interface
 	public boolean isDrawGraph() {
 		return drawGraph;
 	}
     
-	@Deprecated
-	public void showGraph() {
-		graph.plotGraph();
-	}
 }

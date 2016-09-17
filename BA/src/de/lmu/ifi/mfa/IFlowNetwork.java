@@ -28,9 +28,9 @@ import java.util.LinkedList;
  */
 public interface IFlowNetwork {
 
-	/*********************************************
+	/*********************************************************
 	 * Vertex
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Add a vertex to the graph of the flow network. When the vertex already
 	 * exists, nothing happens.
@@ -48,9 +48,9 @@ public interface IFlowNetwork {
 	 */
 	void removeVertex(int vertexId);
 
-	/*********************************************
+	/*********************************************************
 	 * Edge
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Add an edge to the graph of the flow network. When the edge already exists, nothing happens.
 	 * 
@@ -69,9 +69,9 @@ public interface IFlowNetwork {
 	 */
 	void removeEdge(int vertexId1, int vertexId2);
 	
-	/*********************************************
+	/*********************************************************
 	 * Source/Sink
-	 *********************************************/ 
+	 *********************************************************/ 
 	/**
 	 * Specify a vertex to be the source of the flow network. When the vertex does not
 	 * exist, nothing happens.
@@ -103,9 +103,9 @@ public interface IFlowNetwork {
 	 */
 	int getSink();
 	
-	/*********************************************
+	/*********************************************************
 	 * Evaluate
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Calculate and return the maximum flow with Dinic's augmenting path algorithm.
 	 * This method calculates one solution for the maximum flow in O(n²m) time and updates
@@ -124,9 +124,9 @@ public interface IFlowNetwork {
 	 */
 	int goldbergTarjan();
 	
-	/*********************************************
+	/*********************************************************
 	 * Control
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Reset the flow network to an empty network.This method removes all
 	 * edges and vertices from the graph to reset the flow network
@@ -139,10 +139,9 @@ public interface IFlowNetwork {
 	 * flow network with the current state of the flow to the file system. Therefore,
 	 * it uses a special file format <tt>*.mfa</tt>. When a failure arises, nothing happens.
 	 * 
-	 * @param file the file to save the flow network
-	 * @see File	
+	 * @param file the file to save the flow network.
+	 * @see java.io.File	
 	 */
-	//TODO javadoc for File can not ne attached
 	void saveNetwork(File file);
 	
 	/**
@@ -150,14 +149,14 @@ public interface IFlowNetwork {
 	 * flow network with the current state of the flow from a special <tt>*.mfa</tt> file. 
 	 * When the file is not found, or another failure arises, nothing happens.
 	 * 
-	 * @param file the file to load the flow network
-	 * @see File
+	 * @param file the file to load the flow network.
+	 * @see java.io.File
 	 */
 	void loadNetwork(File file);
 	
-	/*********************************************
+	/*********************************************************
 	 * Output
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Return status information about the last operations. This method can be used
 	 * from UIs to provide control information to the user. It returns success messages,
@@ -192,9 +191,9 @@ public interface IFlowNetwork {
 	 */
 	LinkedList<Integer> getVertexIndices();
 	
-	/*********************************************
+	/*********************************************************
 	 * Update/Draw
-	 *********************************************/
+	 *********************************************************/
 	/**
 	 * Update the graph after a change. Set a flag that the status of the graph has changed and inform
 	 * all components of the program about this change.

@@ -32,6 +32,7 @@ import de.lmu.ifi.mfa.IFlowNetwork;
  */
 public class MFAController {
 
+	//main variables
     private MFAView ctrlView;
     private IFlowNetwork ctrlModel;
 
@@ -51,6 +52,7 @@ public class MFAController {
         addListeners();
     }
     
+    //add all listeners to to the several buttons
     private void addListeners(){
         this.ctrlView.setAddVertexListener(new AddVertexListener());
         this.ctrlView.setRemoveVertexListener(new RemoveVertexListener());
@@ -66,18 +68,39 @@ public class MFAController {
     }
     
     //Inner listener classes implementing the interface ActionListener
+    /**
+     * Action Listener for the "Add Vertex" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class AddVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int vertexId = ctrlView.getAddVertexId();
         	ctrlModel.addVertex(vertexId);
         }
     }
+    /**
+     * Action Listener for the "Remove Vertex" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class RemoveVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int vertexId = ctrlView.getRemoveVertexId();
         	ctrlModel.removeVertex(vertexId);
         }
     }
+    /**
+     * Action Listener for the "Add Edge" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class AddEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int startEdgeId = ctrlView.getAddEdgeId1();
@@ -86,6 +109,13 @@ public class MFAController {
         	ctrlModel.addEdge(startEdgeId,endEdgeId,capEdge);
         }
     }
+    /**
+     * Action Listener for the "Remove Edge" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class RemoveEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int startEdgeId = ctrlView.getRemoveEdgeId1();
@@ -93,33 +123,75 @@ public class MFAController {
         	ctrlModel.removeEdge(startEdgeId,endEdgeId);
         }
     }
+    /**
+     * Action Listener for the "Set Source" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class SourceListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int sourceId = ctrlView.getSourceId();
         	ctrlModel.setSource(sourceId);
         }
     }
+    /**
+     * Action Listener for the "Set Sink" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class SinkListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int sinkId = ctrlView.getSinkId();
         	ctrlModel.setSink(sinkId);
         }
     }
+    /**
+     * Action Listener for the "Dinic" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class DinicListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	ctrlModel.dinic();
         }
     }
+    /**
+     * Action Listener for the "Goldberg-Tarjan" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class GoldbergListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	ctrlModel.goldbergTarjan();
         }
     }
+    /**
+     * Action Listener for the "Reset Flow Network" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class ResetListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	ctrlModel.resetNetwork();
         }
     }
+    /**
+     * Action Listener for the "Save Flow Network" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class SaveListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	JFileChooser fileChooser = new JFileChooser();
@@ -138,20 +210,24 @@ public class MFAController {
         	}
         }
     }
+    /**
+     * Action Listener for the "Load Flow Network" button.
+     * 
+     * @author  Christian Gebhardt
+	 * @version 1.0.1
+	 * @since   2016-09-03
+     */
     class LoadListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
         	int example = loadExample();
-        	if (example == 0) {
+        	if (example == 0) {	//load example network from the internal resources
         		try {
-//	        		URL url = MFAView.class.getResource("/resources/example.mfa");
-	        		
-//	        		File file = new File(url.toURI());
 	        		File file = getFile();
 	        		ctrlModel.loadNetwork(file);
         		} catch (Exception ex) {}
-        	} else if (example == 1) {
+        	} else if (example == 1) {	//load network from the file system (type: *.mfa)
 	        	JFileChooser fileChooser = new JFileChooser();
-	        	// add filter
+	        	// add file filter
 	        	FileNameExtensionFilter mfaFilter = new FileNameExtensionFilter("mfa files (*.mfa)", "mfa");
 	        	fileChooser.addChoosableFileFilter(mfaFilter);
 	        	fileChooser.setFileFilter(mfaFilter);
@@ -177,7 +253,7 @@ public class MFAController {
     	return response;
     }
     
-    
+    //Load example from thesis from the internal resources
     private File getFile() {
     	File file = null;
         String resource = "/resources/example.mfa";
@@ -198,7 +274,7 @@ public class MFAController {
             	ex.printStackTrace();
             }
         } else {
-            //this will probably work in your IDE, but not from a JAR
+            //this will work in your IDE, but not from a JAR
             file = new File(res.getFile());
         }
         

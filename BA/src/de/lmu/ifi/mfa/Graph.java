@@ -27,6 +27,7 @@ import java.util.ListIterator;
  */
 class Graph implements IGraph, Serializable {
 
+	//constant values
 	private static final long serialVersionUID = 1L;
 	private static final String NEWLINE = System.getProperty("line.separator");
 	
@@ -48,6 +49,7 @@ class Graph implements IGraph, Serializable {
 		this.vertices = new LinkedHashMap<Integer,Vertex>();
 	}
 	
+	//commented in interface
 	public boolean addVertex(int id) {
 		if (!vertices.containsKey(id)) {
 			vertices.put(id,new Vertex(id));
@@ -57,47 +59,47 @@ class Graph implements IGraph, Serializable {
 		}	
 	}
 	
+	//commented in interface
 	public boolean removeVertex(int id) {
 		if (vertices.containsKey(id)) {
 			boolean success = true;
 			success = success && vertices.get(id).removeAllEdges();
 			success = success && vertices.get(id).removeAllResEdges();
 			vertices.remove(id);
-			return success;
-//			if (vertices.get(id).getPredessors() == 0) {
-//				vertices.get(id).removeAllEdges();
-//				vertices.remove(id);
-//				return true;
-//			} else {
-//				return false;
-//			}		
+			return success;		
 		} else {
 			return false;
 		}	
 	}
 	
+	//commented in interface
 	public boolean containsVertex(int id) {
 		return vertices.containsKey(id);
 	}
 	
+	//commented in interface
 	public boolean addEdge(int vertexId1, int vertexId2, int capacity) {
+//		if (this.containsVertex(vertexId1) && this.containsVertex(vertexId2)) {
+//			if(vertices.get(vertexId1).containsEdge(vertexId2) || vertices.get(vertexId2).containsEdge(vertexId1)) {
+//				return false;
+//			}
+//		}
 		this.addVertex(vertexId1);
 		this.addVertex(vertexId2);
 		Vertex startVertex = vertices.get(vertexId1);
 		Vertex endVertex = vertices.get(vertexId2);
 		startVertex.addEdge(endVertex,capacity);
 		endVertex.addResEdge(startVertex);
-//		endVertex.incrementPredessors();
 		return true;
 	}
 	
+	//commented in interface
 	public boolean removeEdge(int vertexId1, int vertexId2) {
 		Vertex startVertex = vertices.get(vertexId1);
 		Vertex endVertex = vertices.get(vertexId2);
 		if (startVertex != null && endVertex != null) {
 			boolean success = startVertex.removeEdge(endVertex);
 			if (success) {
-//				endVertex.decrementPredessors();
 				endVertex.removeResEdge(startVertex);
 				return true;
 			} else {
@@ -108,6 +110,7 @@ class Graph implements IGraph, Serializable {
 		}
 	}
 	
+	//commented in interface
 	public boolean resetFlow() {
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
@@ -118,6 +121,7 @@ class Graph implements IGraph, Serializable {
 		return true;
 	}
 	
+	//commented in interface
 	public boolean resetExcess(int startVertexId) {
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
@@ -129,6 +133,7 @@ class Graph implements IGraph, Serializable {
 		return true;
 	}
 	
+	//commented in interface
 	public boolean initializeLabels(int startVertexId) {
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
@@ -140,7 +145,7 @@ class Graph implements IGraph, Serializable {
 		return true;
 	}
 	
-	
+	//commented in interface
 	public void buildResidualGraph() {
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
@@ -153,15 +158,19 @@ class Graph implements IGraph, Serializable {
         }
 	}
 	
-	//Dinic
+	/*********************************************************
+	 * Dinic algorithm functions
+	 *********************************************************/
+	//commented in interface
 	public int buildLayeredNetwork(int startVertexId, int endVertexId) {
-		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
-        {
+		//initialize layer number, blocking flag, edge iterator, and dead end flag
+		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet()) {
 			entry.getValue().resetLayer();
 			entry.getValue().resetBlockings();
 			entry.getValue().resetEdge();
 			entry.getValue().setDead(false);
         }
+		//initialize auxiliary variables
 		int layerNbr = 0;
 		Vertex startVertex = vertices.get(startVertexId);
 		Vertex endVertex = vertices.get(endVertexId);
@@ -169,10 +178,10 @@ class Graph implements IGraph, Serializable {
 		LinkedList<Edge> tempEdges = null;
 		LinkedList<Vertex> currentLayer = new LinkedList<Vertex>();
 		LinkedList<Vertex> nextLayer = new LinkedList<Vertex>();
-		
+		//create layer 0 with start vertex
 		startVertex.setLayer(0);	
 		currentLayer.add(startVertex);
-		
+		//loop over all layers
 		while(!currentLayer.isEmpty()) {
 			layerNbr++;
 			while(!currentLayer.isEmpty()) {
@@ -206,7 +215,7 @@ class Graph implements IGraph, Serializable {
 					}
 				}
 			}
-			
+			//check termination condition
 			if (nextLayer.contains(endVertex)) {
 				ListIterator<Vertex> listIterator = nextLayer.listIterator();
 				while (listIterator.hasNext()) {
@@ -221,35 +230,49 @@ class Graph implements IGraph, Serializable {
 		}
 		return -1;
 	}
-	
+
+	//commented in interface
 	public boolean searchAugmentingPath(int startVertexId, int endVertexId) {
+		//initialize auxiliary variables
 		augmentingPath = new LinkedList<Edge>();
 		Vertex activeVertex = vertices.get(startVertexId);
 		Vertex startVertex = vertices.get(startVertexId);
 		Vertex endVertex = vertices.get(endVertexId);
+		//loop over vertices until end vertex is reached
 		while(activeVertex != endVertex) {
 			if(!activeVertex.isDead()) {
+				//one step forward
 				Edge newEdge = activeVertex.getNextEdge();
-				if(activeVertex == newEdge.getStartVertex()) {			//normal edge		//can be simplified???
-					if (newEdge.getEndVertex().getLayer() == activeVertex.getLayer()+1) {
+				if (newEdge == null) {
+					augmentingPath = null;
+					return false;
+				} else {
+					System.out.println(newEdge.edgeToString());
+				}
+				if(activeVertex == newEdge.getStartVertex()) {			//normal edge
+					if (newEdge.getEndVertex().getLayer() == activeVertex.getLayer()+1 && newEdge.getCapacity()>newEdge.getFlow()) {
 						activeVertex = newEdge.getEndVertex();
 						augmentingPath.add(newEdge);
+						System.out.println("Edge"+newEdge.edgeToString());
 					}
-				} else if(activeVertex == newEdge.getEndVertex()) {	//residual edge
+				} else if(activeVertex == newEdge.getEndVertex() && 0<newEdge.getFlow()) {	//residual edge
 					if (newEdge.getStartVertex().getLayer() == activeVertex.getLayer()+1) {
 						activeVertex = newEdge.getStartVertex();
 						augmentingPath.add(newEdge);
+						System.out.println("Res edge"+newEdge.edgeToString());
 					}
 				} else {
 					//Failure
 					System.out.println("FAILURE searchAugmentingPath");
 				}
 			} else {
-				System.out.println("Dead vertex:"+activeVertex.toString());
+				System.out.println("Dead vertex:"+activeVertex.vertexToString());
+				//check termination condition (no augmenting path in network)
 				if (activeVertex == startVertex) {
 					augmentingPath = null;
 					return false;
 				}
+				//one step back
 				Edge lastEdge = augmentingPath.removeLast();
 				lastEdge.setBlocked(true);
 				if(activeVertex == lastEdge.getEndVertex()) {			//normal edge
@@ -265,17 +288,20 @@ class Graph implements IGraph, Serializable {
 		return true;
 	}
 	
+	//commented in interface
 	public int updateMinFlowIncrement() {
 		int deltaFlow = 0;
 		if (augmentingPath.size()<1) {
 			System.out.println("FAILURE in undateMinFlowIncrement");
 			return 0;
 		}
+		//initialize auxiliary variables
 		ListIterator<Edge> listIterator = augmentingPath.listIterator();
 		Edge currentEdge = listIterator.next();
 		Vertex startVertex = currentEdge.getStartVertex();
 		Vertex endVertex = currentEdge.getEndVertex();
 		deltaFlow = currentEdge.getCapacity()-currentEdge.getFlow();
+		//loop over all edges in augmenting path
 		while (listIterator.hasNext()) {
 			currentEdge = listIterator.next();
 			startVertex = endVertex;
@@ -294,30 +320,29 @@ class Graph implements IGraph, Serializable {
 				System.out.println("FAILURE updateMinFlowIncrement");
 			}
 		}
-		//DeleteLater
-		System.out.println("Endvertex :"+endVertex.id());
 		
 		//Block edges, reset augmenting path and update flow
 		listIterator = augmentingPath.listIterator();
 		//first edge
 		currentEdge = listIterator.next();
-		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {	//only normal edge possible
-			currentEdge.setBlocked(true);
-			System.out.println("Edge blocked:"+currentEdge.toString());
-		} else {
-			currentEdge.getStartVertex().setPreviousEdge();
-			System.out.println("Edge reset:"+currentEdge.toString());
-		}
+//		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {	//only normal edge possible
+//			currentEdge.setBlocked(true);
+//			System.out.println("Edge blocked:"+currentEdge.edgeToString());
+//		} else {
+//			currentEdge.getStartVertex().setPreviousEdge();
+//			System.out.println("Edge reset:"+currentEdge.edgeToString());
+//		}
 		startVertex = currentEdge.getStartVertex();
 		endVertex = currentEdge.getEndVertex();
-		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {
+		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) { //only normal edge possible
 			currentEdge.setBlocked(true);
-			System.out.println("Edge blocked:"+currentEdge.toString());
+			System.out.println("Edge blocked:"+currentEdge.edgeToString());
 		} else {
 			startVertex.setPreviousEdge();
-			System.out.println("Edge reset:"+currentEdge.toString());
+			System.out.println("Edge reset:"+currentEdge.edgeToString());
 		}
 		currentEdge.setFlow(currentEdge.getFlow()+deltaFlow);
+		//loop over all edges in augmenting path
 		while (listIterator.hasNext()) {
 			currentEdge = listIterator.next();
 			startVertex = endVertex;
@@ -325,25 +350,25 @@ class Graph implements IGraph, Serializable {
 				endVertex = currentEdge.getEndVertex();
 				if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {
 					currentEdge.setBlocked(true);
-					System.out.println("Edge blocked:"+currentEdge.toString());
+					System.out.println("Edge blocked:"+currentEdge.edgeToString());
 				} else {
 					currentEdge.getStartVertex().setPreviousEdge();
-					System.out.println("Edge reset:"+currentEdge.toString());
+					System.out.println("Edge reset:"+currentEdge.edgeToString());
 				}
 				currentEdge.setFlow(currentEdge.getFlow()+deltaFlow);
 			} else if (startVertex == currentEdge.getEndVertex()) {	//residual edge
 				endVertex = currentEdge.getStartVertex();
 				if (deltaFlow == currentEdge.getFlow()) {
 					currentEdge.setBlocked(true);
-					System.out.println("Edge blocked:"+currentEdge.toString());
+					System.out.println("Edge blocked:"+currentEdge.edgeToString());
 				} else {
 					currentEdge.getEndVertex().setPreviousEdge();
-					System.out.println("Edge reset:"+currentEdge.toString());
+					System.out.println("Edge reset:"+currentEdge.edgeToString());
 				}
 				currentEdge.setFlow(currentEdge.getFlow()-deltaFlow);
 			} else {
 				//Failure
-				System.out.println("FAILURE updateMinFlowIncrement");
+				System.out.println("FAILURE updateMinFlowIncrement2");
 			}
 		}
 		augmentingPathToString();
@@ -351,36 +376,40 @@ class Graph implements IGraph, Serializable {
 	}
 	
 	
-	//Goldberg-Tarjan
+	/*********************************************************
+	 * Goldberg-Tarjan algorithm functions
+	 *********************************************************/
+	//commented in interface
 	public int initialPush(int startVertexId, int endVertexId) {
 		startVertex = vertices.get(startVertexId);
 		endVertex = vertices.get(endVertexId);
 		queue = new LinkedList<Vertex>();
 		LinkedList<Edge> startEdges = startVertex.getAllEdges();
 		ListIterator<Edge> listIterator = startEdges.listIterator();
+		//loop over all outgoing edges of the source
 		while (listIterator.hasNext()) {
 			Vertex newVertex = listIterator.next().pushFlowForward();
 			if (newVertex != null && newVertex != startVertex && newVertex != endVertex) {
 				queue.add(newVertex);
 			}
 		}
-		
 		//return queue length
 		return queue.size();
 	}
 	
+	//commented in interface
 	public int dischargeQueue() {
-		//Discharge head vertex
+		//discharge head vertex
 		Vertex headVertex = queue.removeFirst();
 		headVertex.resetEdge();
 		while (headVertex.getExcess()>0 && !headVertex.labelIncreased()) {
 			Vertex newVertex = headVertex.push_relabel();
-			if (newVertex != null && newVertex != startVertex && newVertex != endVertex) {
+			if (newVertex != null && newVertex != startVertex && newVertex != endVertex) {	//add new vertex to queue
 				queue.add(newVertex);
 			}
 		}
 		System.out.println("Vertex "+headVertex.id()+" - Excess: "+headVertex.getExcess());
-		if (headVertex.getExcess() > 0) {
+		if (headVertex.getExcess() > 0) {	//vertex still active
 			headVertex.resetIncreasedLabel();
 			queue.add(headVertex);
 		}
@@ -389,24 +418,26 @@ class Graph implements IGraph, Serializable {
 		return queue.size();
 	}
 	
-	
+	//commented in interface
 	public int getOutFlow(int vertexId) {
 		return vertices.get(vertexId).getOutFlow();
 	}
+	//commented in interface
 	public int getInFlow(int vertexId) {
 		return vertices.get(vertexId).getInFlow();
 	}
 
-	
-	public String toString() {
+	//commented in interface
+	public String graphToString() {
 		StringBuilder s = new StringBuilder();
 		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet())
         {
-			s.append(entry.getValue().toString()+NEWLINE);
+			s.append(entry.getValue().vertexToString()+NEWLINE);
         }
 		return s.toString();
 	}
 	
+	//commented in interface
 	public LinkedList<Integer[]> getGraphData() {
 		LinkedList<Integer[]> graphEdges = new LinkedList<Integer[]>();
 		//iterate over vertices
@@ -418,6 +449,7 @@ class Graph implements IGraph, Serializable {
 		return graphEdges;
 	}
 	
+	//commented in interface
 	public LinkedList<Integer> getVertexIndices() {
 		LinkedList<Integer> veritecsIds = new LinkedList<Integer>();
 		//iterate over vertices
@@ -429,14 +461,8 @@ class Graph implements IGraph, Serializable {
 		return veritecsIds;
 	}
 	
+	//Auxiliary function
 	@Deprecated
-	protected void plotGraph() {
-		for (Map.Entry<Integer, Vertex> entry : vertices.entrySet()) {
-			entry.getValue().printNeighbors();
-		}
-	}
-	
-	//Auxilary function
 	private void augmentingPathToString() {
 		if (augmentingPath == null) {
 			System.out.println("Empty path");
@@ -446,7 +472,7 @@ class Graph implements IGraph, Serializable {
 			
 			ListIterator<Edge> listIterator = augmentingPath.listIterator();
 			while (listIterator.hasNext()) {
-				s.append(listIterator.next().toString());
+				s.append(listIterator.next().edgeToString());
 			}
 			System.out.println(s.toString());
 		}

@@ -141,10 +141,12 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         menuBar = new JMenuBar();
         info = new JMenu("Help");
         menuBar.add(info);
-        URL urlHelp = MFAView.class.getResource("/resources/questionmark16.png");
+        //"help" menu item
+        URL urlHelp = MFAView.class.getResource("/resources/questionmark16.png");	//works only for images in JAR
 		ImageIcon helpIcon = new ImageIcon(urlHelp);
         help = new JMenuItem("Help Contents", helpIcon);
         help.addActionListener(this);
+        //"about" menu item
         URL urlAbout = MFAView.class.getResource("/resources/lmu16.gif");
 		ImageIcon aboutIcon = new ImageIcon(urlAbout);
         about = new JMenuItem("About MFA",aboutIcon);
@@ -161,21 +163,17 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         } else {
         	setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         }
-        System.out.println(dim);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);       
+//        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);	//start in maximized window
         
-//        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-//        setLocation(200, 200);
-        System.out.println(this.getClass());//getResource("resources/lmu.gif")
-//        ImageIcon img = new ImageIcon(this.getClass().getResource("resources/lmu.gif"));
+        //Program icon (LMU logo)
         URL url = MFAView.class.getResource("/resources/lmu.gif");
-
         System.out.println(url);
         ImageIcon icon = new ImageIcon(url);
-		add(new JLabel(icon));
-		
+		add(new JLabel(icon));					//CAN BE NECLECTED??
         setIconImage(icon.getImage());
+        
+        //top panel (deepest layer)
         JPanel topPanel = new JPanel();
         topPanel.setLayout( new BorderLayout() );
         getContentPane().add( topPanel );
@@ -186,26 +184,26 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         createPanel2();
 
         // Create a splitter pane
-        splitPaneH = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT );
+        splitPaneH = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT );	//left: input+output  - right: display
         //splitPaneH.setOneTouchExpandable(true); 	  //allows to minimize one side of the panel
         //splitPaneH.setDividerLocation(400);			//specify the location of the split pane (maximization removes setting)
         //splitPaneH.setDividerLocation(0.5);			//specify the location of the split pane (only works when pane is packed)
         topPanel.add( splitPaneH, BorderLayout.CENTER );
 
-        splitPaneV = new JSplitPane( JSplitPane.VERTICAL_SPLIT );
+        splitPaneV = new JSplitPane( JSplitPane.VERTICAL_SPLIT );	//top: input  - bottom: output
         splitPaneV.setLeftComponent(panel1a);
         splitPaneV.setRightComponent(panel1b);
 
         splitPaneH.setLeftComponent(splitPaneV);
         splitPaneH.setRightComponent(panel2);
         
-        //finally show view
+        //finally pack and show view
         pack();
 	    setLocationRelativeTo(null);	//set view in the middle of the screen
 	    setVisible(true);
     }
 
-    //Input Field
+    //Input Field Panel
     private void createPanel1a(){
         panel1a = new JPanel();
         panel1a.setLayout(new BorderLayout());
@@ -223,17 +221,17 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         vertexPanel.setOpaque(true);
         vertexPanel.setBackground(Color.WHITE);
         vertexPanel.setBorder(BorderFactory.createTitledBorder("Vertex"));
-        txtAddVertexId = new JTextField(3);
+        txtAddVertexId = new JTextField(3);						//add vertex id text field
         txtAddVertexId.setToolTipText("vertex-ID (add)");
         vertexPanel.add(txtAddVertexId);
-        cmdAddV = new JButton("Add Vertex");
+        cmdAddV = new JButton("Add Vertex");					//add vertex button
         cmdAddV.setToolTipText("add vertex-ID to flow network");
         vertexPanel.add(cmdAddV);
         vertexPanel.add(Box.createRigidArea(new Dimension(10,0)));
-        txtRemoveVertexId = new JTextField(3);
+        txtRemoveVertexId = new JTextField(3);					//remove vertex id text field
         txtRemoveVertexId.setToolTipText("vertex ID (remove)");
         vertexPanel.add(txtRemoveVertexId);
-        cmdRemoveV = new JButton("Remove Vertex");
+        cmdRemoveV = new JButton("Remove Vertex");				//remove vertex button
         cmdRemoveV.setToolTipText("remove vertex-ID from flow network");
         vertexPanel.add(cmdRemoveV);
         inputMask.add(vertexPanel);
@@ -244,26 +242,26 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         edgePanel.setOpaque(true);
         edgePanel.setBackground(Color.WHITE);
         edgePanel.setBorder(BorderFactory.createTitledBorder("Edge"));
-        txtAddEdgeId1 = new JTextField(3);
+        txtAddEdgeId1 = new JTextField(3);						//add edge id 1 text field
         txtAddEdgeId1.setToolTipText("start-vertex ID (add edge)");
         edgePanel.add(txtAddEdgeId1);
-        txtAddEdgeId2 = new JTextField(3);
+        txtAddEdgeId2 = new JTextField(3);						//add edge id 2 text field
         txtAddEdgeId2.setToolTipText("end-vertex ID (add edge)");
         edgePanel.add(txtAddEdgeId2);
-        txtAddEdgeCap = new JTextField(3);
+        txtAddEdgeCap = new JTextField(3);						//add edge capacity text field
         txtAddEdgeCap.setToolTipText("capacity (add edge)");
         edgePanel.add(txtAddEdgeCap);
-        cmdAddE = new JButton("Add Edge");
+        cmdAddE = new JButton("Add Edge");						//add edge button
         cmdAddE.setToolTipText("add edge to flow network");
         edgePanel.add(cmdAddE);
         edgePanel.add(Box.createRigidArea(new Dimension(10,0)));
-        txtRemoveEdgeId1 = new JTextField(3);
+        txtRemoveEdgeId1 = new JTextField(3);						//remove edge id 1 text field
         txtRemoveEdgeId1.setToolTipText("start-vertex ID (remove edge)");
         edgePanel.add(txtRemoveEdgeId1);
-        txtRemoveEdgeId2 = new JTextField(3);
+        txtRemoveEdgeId2 = new JTextField(3);						//remove edge id 2 text field
         txtRemoveEdgeId2.setToolTipText("end-vertex ID (remove edge)");
         edgePanel.add(txtRemoveEdgeId2);
-        cmdRemoveE = new JButton("Remove Edge");
+        cmdRemoveE = new JButton("Remove Edge");					//remove edge button
         cmdRemoveE.setToolTipText("remove edge from flow network");
         edgePanel.add(cmdRemoveE);
         inputMask.add(edgePanel);
@@ -274,17 +272,17 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         source_sink.setOpaque(true);
         source_sink.setBackground(Color.WHITE);
         source_sink.setBorder(BorderFactory.createTitledBorder("Source / Sink"));
-        txtSourceId = new JTextField(3);
+        txtSourceId = new JTextField(3);						//set source id text field
         txtSourceId.setToolTipText("source-vertex ID");
         source_sink.add(txtSourceId);
-        cmdSetSource = new JButton("Set Source");
+        cmdSetSource = new JButton("Set Source");				//set source button
         cmdSetSource.setToolTipText("set source of flow network");
         source_sink.add(cmdSetSource);
         source_sink.add(Box.createRigidArea(new Dimension(10,0)));
-        txtSinkId = new JTextField(3);
+        txtSinkId = new JTextField(3);							//set sink id text field
         txtSinkId.setToolTipText("sink-vertex ID");
         source_sink.add(txtSinkId);
-        cmdSetSink = new JButton("Set Sink");
+        cmdSetSink = new JButton("Set Sink");					//set sink button
         cmdSetSink.setToolTipText("set sink of flow network");
         source_sink.add(cmdSetSink);
         inputMask.add(source_sink);
@@ -295,11 +293,11 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         evaluate.setOpaque(true);
         evaluate.setBackground(Color.WHITE);
         evaluate.setBorder(BorderFactory.createTitledBorder("Evaluate"));
-        cmdDinic = new JButton("Dinic");
+        cmdDinic = new JButton("Dinic");						//evaluate Dinic button
         cmdDinic.setToolTipText("calculate maximum flow with Dinic algorithm");
         evaluate.add(cmdDinic);
         evaluate.add(Box.createRigidArea(new Dimension(10,0)));
-        cmdGoldberg = new JButton("Goldberg-Tarjan");
+        cmdGoldberg = new JButton("Goldberg-Tarjan");			//evaluate Goldberg-Tarjan button
         cmdGoldberg.setToolTipText("calculate maximum flow with Goldberg-Tarjan algorithm");
         evaluate.add(cmdGoldberg);
         inputMask.add(evaluate);
@@ -310,15 +308,15 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         control.setOpaque(true);
         control.setBackground(Color.WHITE);
         control.setBorder(BorderFactory.createTitledBorder("Control"));
-        cmdReset = new JButton("Reset Flow Network");
+        cmdReset = new JButton("Reset Flow Network");			//reset flow network button
         cmdReset.setToolTipText("reset flow network to empty network");
         control.add(cmdReset);
         control.add(Box.createRigidArea(new Dimension(10,0)));
-        cmdSave = new JButton("Save Flow Network");
+        cmdSave = new JButton("Save Flow Network");				//save flow network button
         cmdSave.setToolTipText("save current flow network to file");
         control.add(cmdSave);
         control.add(Box.createRigidArea(new Dimension(10,0)));
-        cmdLoad = new JButton("Load Flow Network");
+        cmdLoad = new JButton("Load Flow Network");				//load flow network button
         cmdLoad.setToolTipText("load flow network from demo example or from file");
         control.add(cmdLoad);
         inputMask.add(control);
@@ -377,8 +375,8 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 //        try {
 //			Thread.sleep(1);		//might be neclected
 //		} catch (Exception ex) {}
-        this.revalidate();
-        this.repaint();
+        this.revalidate();		//repaint all the components of the container
+        this.repaint();			//repaint the container itself
         outputMask.add(graphPanel);
         outputMask.add(Box.createRigidArea(new Dimension(0,25)));
         
@@ -397,21 +395,8 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	    try {
 	            layout.execute(graph.getDefaultParent());
 	    } finally {
-//	            mxMorphing morph = new mxMorphing(graphComponent, 6, 1.5, 0);  //https://jgraph.github.io/mxgraph/docs/js-api/files/util/mxMorphing-js.html
-////	    		mxMorphing morph = new mxMorphing(graphComponent);
-//	            morph.addListener(mxEvent.DONE, new mxIEventListener() {
-//	
-//	                    @Override
-//	                    public void invoke(Object arg0, mxEventObject arg1) {
-//	                            graph.getModel().endUpdate();
-//
-//	                            // fitViewport();
-//	                    }
-//	
-//	            });
-//	            morph.startAnimation();
-	    	graph.getModel().endUpdate();
-	    	
+	    	//template changed from https://jgraph.github.io/mxgraph/docs/js-api/files/util/mxMorphing-js.html
+	    	graph.getModel().endUpdate();	    	
 	    	
 	    	//get the size of layout
 	        double widthLayout = graphComponent.getLayoutAreaSize().getWidth();
@@ -419,9 +404,11 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	        //we need to determine the size of the graph
 	        double width = graph.getGraphBounds().getWidth();
 	        double height = graph.getGraphBounds().getHeight();
+	        double leftCorner = (widthLayout - width)/2 > 0 ? (widthLayout - width)/2 : 0;	// max(0, (widthLayout - width)/2)
+	        double topCorner = (heightLayout - height)/2 > 0 ? (heightLayout - height)/2 : 0;	// max(0, (heightLayout - height)/2)
 	        //set new geometry to set the graph in the center
 	        graph.getModel().setGeometry(graph.getDefaultParent(), 
-	                new mxGeometry((widthLayout - width)/2, (heightLayout - height)/2,
+	                new mxGeometry(leftCorner, topCorner,
 	                        widthLayout, heightLayout));
 	    }
 	
@@ -458,6 +445,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   int endId = myFlowNet.getSink();
 	   vertices = new HashMap<Integer,Object>();
 	   
+	   //remove all graph components first
 	   graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
 	   
 	   graph.getModel().beginUpdate();
@@ -469,7 +457,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 				Integer[] nextEdge = listIterator.next();
 				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[0])) {	//add start vertex of edge
 					Object a;
-					if (startId == nextEdge[0]) {
+					if (startId == nextEdge[0]) {	//check for source or sink vertex
 						a = graph.insertVertex(parent, nextEdge[0]+"", nextEdge[0]+"", 0, 0, 50, 30,"fillColor=green");
 					} else if (endId == nextEdge[0]) {
 						a = graph.insertVertex(parent, nextEdge[0]+"", nextEdge[0]+"", 0, 0, 50, 30,"fillColor=red");
@@ -480,7 +468,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 				}
 				if (nextEdge.length > 0 && !vertices.containsKey(nextEdge[1])) {	//add end vertex of edge
 					Object a;
-					if (endId == nextEdge[1]) {
+					if (endId == nextEdge[1]) {		//check for source or sink vertex
 						a = graph.insertVertex(parent, nextEdge[1]+"", nextEdge[1]+"", 0, 0, 50, 30,"fillColor=red");
 					} else if (startId == nextEdge[1]) {
 						a = graph.insertVertex(parent, nextEdge[1]+"", nextEdge[1]+"", 0, 0, 50, 30,"fillColor=green");
@@ -496,7 +484,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 			while (listIteratorV.hasNext()) {
 				Integer vId = listIteratorV.next();
 				if (!vertices.containsKey(vId)) {
-					if (endId == vId) {
+					if (endId == vId) {		//check for source or sink vertex
 						a = graph.insertVertex(parent, vId+"", vId+"", 0, 0, 50, 30,"fillColor=red");
 					} else if (startId == vId) {
 						a = graph.insertVertex(parent, vId+"", vId+"", 0, 0, 50, 30,"fillColor=green");
@@ -523,19 +511,19 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	   morphGraph(graph, graphComponent);
    }
    
-   //update edges and edge labels in graph (without redrawing the graph)
+   //update edges and edge labels in graph (without redrawing the graph totally)
    private void updateGraph() {
 	   if (vertices != null) {
 		   LinkedList<Integer[]> edges = myFlowNet.getGraphData();
 		   graph.getModel().beginUpdate();
 		   try {
-			   //remove edge and add again;
+			   //remove all edges and add again
 			   Object parent = graph.getDefaultParent();
 			   ListIterator<Integer[]> listIterator = edges.listIterator();
 				while (listIterator.hasNext()) {
 					Integer[] nextEdge = listIterator.next();
 					if (nextEdge.length > 0 && vertices.containsKey(nextEdge[0]) && vertices.containsKey(nextEdge[1])) {
-						Object[] edgeList = graph.getEdgesBetween(vertices.get(nextEdge[0]), vertices.get(nextEdge[1]),true);
+						Object[] edgeList = graph.getEdgesBetween(vertices.get(nextEdge[0]), vertices.get(nextEdge[1]),true); //true: only edges in one direction
 						if (edgeList.length > 0) {
 							((mxGraphModel) graph.getModel()).remove(edgeList[0]);
 							graph.removeCells(edgeList);

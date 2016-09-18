@@ -2,6 +2,14 @@ package de.lmu.ifi.mfa;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Scanner;
+
 import org.junit.*;
 
 public class FlowNetworkTest {
@@ -69,10 +77,36 @@ public class FlowNetworkTest {
 		testNetwork.setSource(0,false);
 	    testNetwork.setSink(1,false);
 		assertEquals(3, testNetwork.dinic());
+		
+		testNetwork = getBigNetwork();
+		testNetwork.setSource(1,false);
+	    testNetwork.setSink(12,false);
+	    int flow = testNetwork.dinic();
+	    System.out.println("Flow: "+flow);
+	    testNetwork.saveNetwork(new File("C:/Users/gebha/Desktop/bigGraph.mfa"));
+	    assertEquals(8, flow);
 	}
 	
 	
 	private FlowNetwork getBigNetwork() {
-		return null;
+		List<String> lines;
+		Scanner scanner;
+		int startId; int endId; int capacity;
+		FlowNetwork testNetwork = new FlowNetwork();
+		try {
+			lines = Files.readAllLines(Paths.get("C:/Users/gebha/Desktop/bigGraph.txt"), Charset.forName("UTF-8"));
+			for(String line:lines){
+				  System.out.println(line);
+				  scanner = new Scanner(line);
+				  startId = scanner.nextInt();
+				  endId = scanner.nextInt();
+				  capacity = scanner.nextInt();
+				  testNetwork.addEdge(startId, endId, capacity);
+				}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		
+		return testNetwork;
 	}
 }

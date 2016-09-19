@@ -166,14 +166,12 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         	setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);       
-//        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);	//start in maximized window
         //change graph location on resize
         addComponentListener(new SizeListener());
         
         //Program icon (LMU logo)
         URL url = MFAView.class.getResource("/resources/lmu.gif");
         ImageIcon icon = new ImageIcon(url);
-		add(new JLabel(icon));					//CAN BE NECLECTED??
         setIconImage(icon.getImage());
         
         //top panel (deepest layer)
@@ -188,9 +186,6 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 
         // Create a splitter pane
         splitPaneH = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT );	//left: input+output  - right: display
-        //splitPaneH.setOneTouchExpandable(true); 	  //allows to minimize one side of the panel
-        //splitPaneH.setDividerLocation(400);			//specify the location of the split pane (maximization removes setting)
-        //splitPaneH.setDividerLocation(0.5);			//specify the location of the split pane (only works when pane is packed)
         topPanel.add( splitPaneH, BorderLayout.CENTER );
 
         splitPaneV = new JSplitPane( JSplitPane.VERTICAL_SPLIT );	//top: input  - bottom: output
@@ -422,7 +417,6 @@ public class MFAView extends JFrame implements Observer, ActionListener {
    public void update(Observable obs, Object obj) {
       if (obs == myFlowNet)
       {
-         System.out.println(myFlowNet.getPrompt());
          if (myFlowNet.isUpdateGraph()) {
 	         this.txtDisplay.setText(myFlowNet.displayFlowNetwork());
 	         this.txtDisplay.setSelectionStart(0);	//Go to the top of text area
@@ -498,11 +492,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 		    listIterator = edges.listIterator();
 			while (listIterator.hasNext()) {
 				Integer[] nextEdge = listIterator.next();
-				if (nextEdge.length > 0) {
-					graph.insertEdge(parent, null, nextEdge[3]+"/"+nextEdge[2], vertices.get(nextEdge[0]), vertices.get(nextEdge[1]));
-				} else {
-					System.out.println("WRONG TUPEL FROM GRAPH");
-				}
+				graph.insertEdge(parent, null, nextEdge[3]+"/"+nextEdge[2], vertices.get(nextEdge[0]), vertices.get(nextEdge[1]));
 			}
 	   } finally {
 		   graph.getModel().endUpdate();
@@ -529,7 +519,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 							graph.removeCells(edgeList);
 							graph.insertEdge(parent, null, nextEdge[3]+"/"+nextEdge[2], vertices.get(nextEdge[0]), vertices.get(nextEdge[1]));
 						} else {
-							System.out.println("EDGE LIST ZERO");
+							//Do nothing
 						}
 					}
 				}
@@ -540,7 +530,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 		   //rearrange components
 		   morphGraph(graph, graphComponent);
 	   } else {
-		   System.out.println("VERTICES IS NULL");
+		   //Do nothing
 	   }
    }
    

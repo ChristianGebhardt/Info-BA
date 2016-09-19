@@ -122,7 +122,6 @@ class Vertex implements Serializable {
 		if (startVertex.containsEdge(this)) {
 			Edge oldEdge = startVertex.getEdge(this);
 			if (oldEdge != null) {
-				System.out.println("REMOVERESEDGE");
 				resNeighbors.remove(oldEdge);
 				return true;
 			} else {
@@ -235,7 +234,6 @@ class Vertex implements Serializable {
 	 *
 	 */
 	protected void clearResNeighbors() {
-		System.out.println("CLEARRESNEIGHBORS");
 		resNeighbors = new LinkedList<Edge>();
 	}
 	
@@ -434,7 +432,6 @@ class Vertex implements Serializable {
 		}
 		this.label = newLabel;
 		this.increasedLabel = true;
-		System.out.println("Relabel vertex "+this.id+" to "+this.label);
 	}
 	
 	/**
@@ -465,8 +462,6 @@ class Vertex implements Serializable {
 		Edge pushEdge = this.getNextEdge();
 		Vertex newActiveVertex;
 		if(pushEdge == null) {
-			//TODO CHECK THIS CASE
-			System.out.println("FAILURE for vertex"+this.vertexToString());
 			this.relabelVertex();
 			this.setDead(false);
 			newActiveVertex = null;
@@ -527,46 +522,31 @@ class Vertex implements Serializable {
 	 * @return the next edge in the list of all outgoing edges in the residual graph. 
 	 */
 	protected Edge getNextEdge() {
-		System.out.println("SIZE: "+resNeighbors.size());
 		if (this.isDead()) {
 			return null;
 		} else {
 			if (iteratorAugPath >= 0 && iteratorAugPath < neighbors.size()) {	//iterate in normal edges
 				iteratorAugPath++;
-				System.out.println(this.vertexToString());
-				System.out.println(iteratorAugPath);
 				if (iteratorAugPath == neighbors.size() && resNeighbors.size() == 0) {
-					System.out.println("Vertex "+id+" set dead");
 					this.setDead(true);
 				}
 				return neighbors.get(iteratorAugPath-1);
 			} else if (iteratorAugPath == neighbors.size()) {	//last normal edge -> jump to residual edges
 				iteratorAugPath = -1;	
-				System.out.println(this.vertexToString());
-				System.out.println(iteratorAugPath);
 				if (1 == resNeighbors.size()) {
 					this.setDead(true);
-					System.out.println("ATTENTION: Vertex "+this.id+" set dead.");
 				}
 				if (0 == resNeighbors.size()) {
 					this.setDead(true);
-					System.out.println("ATTENTION: Start vertex "+this.id+" set dead.");
 					return null;
 				}
-				System.out.println("Vertex: "+id);
-				System.out.println("Iterator: "+iteratorAugPath);
-				System.out.println("Size: "+resNeighbors.size());
 				return resNeighbors.get(-1*iteratorAugPath-1);
 			} else if (-1*iteratorAugPath < resNeighbors.size()) {	//residual edge
 				iteratorAugPath--;
-				System.out.println(this.vertexToString());
-				System.out.println(iteratorAugPath);
 				return resNeighbors.get(-1*iteratorAugPath-2);
 			} else {											//last residual edge
 				iteratorAugPath--;
 				this.setDead(true);
-				System.out.println(this.vertexToString());
-				System.out.println(iteratorAugPath);
 				return resNeighbors.get(-1*iteratorAugPath-2);
 			}		
 		}
@@ -580,14 +560,12 @@ class Vertex implements Serializable {
 		if (!this.isDead()) {
 			if (iteratorAugPath > 0 && iteratorAugPath <= neighbors.size()) {	//normal edge
 				iteratorAugPath--;
-				System.out.println(this.vertexToString());
-				System.out.println(iteratorAugPath);
 			} else if (iteratorAugPath == -1) {
 				iteratorAugPath = neighbors.size();
 			} else if (iteratorAugPath < -1) {
 				iteratorAugPath++;
 			} else {
-				System.out.println("FAILURE RESET ITTERATOR"+iteratorAugPath);
+				//Do nothing
 			}	
 		} else {								//residual edge
 			this.setDead(false);

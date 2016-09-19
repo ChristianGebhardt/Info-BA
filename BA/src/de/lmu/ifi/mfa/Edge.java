@@ -48,15 +48,6 @@ class Edge implements Serializable {
 		this.blocked = false;
 	}
 	
-	@Deprecated
-	protected Edge(Vertex startVertex, Vertex endVertex, int capacity, int flow) {
-		this.startVertex = startVertex;
-		this.endVertex = endVertex;
-		this.capacity = capacity;
-		this.flow = flow;
-		this.blocked = false;
-	}
-	
 	/**
 	 * Get the start vertex of the edge. This vertex normally has the edge in it edge list.
 	 * 
@@ -154,7 +145,6 @@ class Edge implements Serializable {
 			startVertex.changeExcess(-deltaFlow);
 		}
 		endVertex.changeExcess(deltaFlow);
-		System.out.println("Push-Forward "+deltaFlow+" on edge"+this.toString());
 		if (previousExcess == 0 && deltaFlow > 0) {
 			endVertex.setDead(false);
 			return endVertex;
@@ -185,7 +175,6 @@ class Edge implements Serializable {
 			startVertex.changeExcess(deltaFlow);
 		}
 		endVertex.changeExcess(-deltaFlow);
-		System.out.println("Push-Backward "+deltaFlow+" on edge"+this.toString());
 		if (previousExcess == 0 && deltaFlow > 0) {
 			startVertex.setDead(false);
 			return startVertex;

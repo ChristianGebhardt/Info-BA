@@ -286,15 +286,12 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 			//main loop
 			while (distance > 0) {
 				boolean pathFound = graph.searchAugmentingPath(sourceId, sinkId);
-				System.out.println("Path found: "+pathFound);
 				if(pathFound) {
 					deltaFlow = graph.updateMinFlowIncrement();
 					maxFlow += deltaFlow;
-					System.out.println("Inrease flow by "+deltaFlow);
 				} else {
 					distance = graph.buildLayeredNetwork(sourceId, sinkId);
 				}
-				System.out.println("Distance is "+distance);
 				try {
 					Thread.sleep(1);
 				} catch (Exception ex) {}
@@ -325,7 +322,6 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 			int queueLength = graph.initialPush(sourceId, sinkId);
 			//main loop
 			while (queueLength>0) {
-				System.out.println("Queue length: "+queueLength);
 				queueLength = graph.dischargeQueue();
 			}
 			maxFlow = graph.getOutFlow(sourceId)-graph.getInFlow(sourceId);
@@ -341,15 +337,6 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		setChanged();
 	    notifyObservers();
 		return maxFlow;
-	}
-	
-	@Deprecated
-	public void clearFlow() {
-		this.prompt = "Function not implemented yet.";
-		updateGraph = true;
-		drawGraph = false;
-		setChanged();
-	    notifyObservers();
 	}
 	
 	//commented in interface

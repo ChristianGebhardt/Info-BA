@@ -79,11 +79,6 @@ class Graph implements IGraph, Serializable {
 	
 	//commented in interface
 	public boolean addEdge(int vertexId1, int vertexId2, int capacity) {
-//		if (this.containsVertex(vertexId1) && this.containsVertex(vertexId2)) {
-//			if(vertices.get(vertexId1).containsEdge(vertexId2) || vertices.get(vertexId2).containsEdge(vertexId1)) {
-//				return false;
-//			}
-//		}
 		this.addVertex(vertexId1);
 		this.addVertex(vertexId2);
 		Vertex startVertex = vertices.get(vertexId1);
@@ -247,26 +242,21 @@ class Graph implements IGraph, Serializable {
 					augmentingPath = null;
 					return false;
 				} else {
-					System.out.println(newEdge.edgeToString());
 				}
 				if(activeVertex == newEdge.getStartVertex()) {			//normal edge
 					if (newEdge.getEndVertex().getLayer() == activeVertex.getLayer()+1 && newEdge.getCapacity()>newEdge.getFlow()) {
 						activeVertex = newEdge.getEndVertex();
 						augmentingPath.add(newEdge);
-						System.out.println("Edge"+newEdge.edgeToString());
 					}
 				} else if(activeVertex == newEdge.getEndVertex() && 0<newEdge.getFlow()) {	//residual edge
 					if (newEdge.getStartVertex().getLayer() == activeVertex.getLayer()+1) {
 						activeVertex = newEdge.getStartVertex();
 						augmentingPath.add(newEdge);
-						System.out.println("Res edge"+newEdge.edgeToString());
 					}
 				} else {
-					//Failure
-					System.out.println("FAILURE searchAugmentingPath");
+					//Do nothing
 				}
 			} else {
-				System.out.println("Dead vertex:"+activeVertex.vertexToString());
 				//check termination condition (no augmenting path in network)
 				if (activeVertex == startVertex) {
 					augmentingPath = null;
@@ -277,11 +267,8 @@ class Graph implements IGraph, Serializable {
 				lastEdge.setBlocked(true);
 				if(activeVertex == lastEdge.getEndVertex()) {			//normal edge
 					activeVertex = lastEdge.getStartVertex();
-				} else if(activeVertex == lastEdge.getStartVertex()) {	//residual edge
+				} else {												//residual edge
 					activeVertex = lastEdge.getEndVertex();
-				} else {
-					//Failure
-					System.out.println("FAILURE searchAugmentingPath");
 				}
 			}
 		}
@@ -292,7 +279,6 @@ class Graph implements IGraph, Serializable {
 	public int updateMinFlowIncrement() {
 		int deltaFlow = 0;
 		if (augmentingPath.size()<1) {
-			System.out.println("FAILURE in undateMinFlowIncrement");
 			return 0;
 		}
 		//initialize auxiliary variables
@@ -310,14 +296,11 @@ class Graph implements IGraph, Serializable {
 				if (deltaFlow > currentEdge.getCapacity()-currentEdge.getFlow()) {
 					deltaFlow = currentEdge.getCapacity()-currentEdge.getFlow();
 				}
-			} else if (startVertex == currentEdge.getEndVertex()) {	//residual edge
+			} else {												//residual edge
 				endVertex = currentEdge.getStartVertex();
 				if (deltaFlow > currentEdge.getFlow()) {
 					deltaFlow = currentEdge.getFlow();
 				}
-			} else {
-				//Failure
-				System.out.println("FAILURE updateMinFlowIncrement");
 			}
 		}
 		
@@ -325,21 +308,12 @@ class Graph implements IGraph, Serializable {
 		listIterator = augmentingPath.listIterator();
 		//first edge
 		currentEdge = listIterator.next();
-//		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {	//only normal edge possible
-//			currentEdge.setBlocked(true);
-//			System.out.println("Edge blocked:"+currentEdge.edgeToString());
-//		} else {
-//			currentEdge.getStartVertex().setPreviousEdge();
-//			System.out.println("Edge reset:"+currentEdge.edgeToString());
-//		}
 		startVertex = currentEdge.getStartVertex();
 		endVertex = currentEdge.getEndVertex();
 		if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) { //only normal edge possible
 			currentEdge.setBlocked(true);
-			System.out.println("Edge blocked:"+currentEdge.edgeToString());
 		} else {
 			startVertex.setPreviousEdge();
-			System.out.println("Edge reset:"+currentEdge.edgeToString());
 		}
 		currentEdge.setFlow(currentEdge.getFlow()+deltaFlow);
 		//loop over all edges in augmenting path
@@ -350,28 +324,20 @@ class Graph implements IGraph, Serializable {
 				endVertex = currentEdge.getEndVertex();
 				if (deltaFlow == currentEdge.getCapacity()-currentEdge.getFlow()) {
 					currentEdge.setBlocked(true);
-					System.out.println("Edge blocked:"+currentEdge.edgeToString());
 				} else {
 					currentEdge.getStartVertex().setPreviousEdge();
-					System.out.println("Edge reset:"+currentEdge.edgeToString());
 				}
 				currentEdge.setFlow(currentEdge.getFlow()+deltaFlow);
-			} else if (startVertex == currentEdge.getEndVertex()) {	//residual edge
+			} else {												//residual edge
 				endVertex = currentEdge.getStartVertex();
 				if (deltaFlow == currentEdge.getFlow()) {
 					currentEdge.setBlocked(true);
-					System.out.println("Edge blocked:"+currentEdge.edgeToString());
 				} else {
 					currentEdge.getEndVertex().setPreviousEdge();
-					System.out.println("Edge reset:"+currentEdge.edgeToString());
 				}
 				currentEdge.setFlow(currentEdge.getFlow()-deltaFlow);
-			} else {
-				//Failure
-				System.out.println("FAILURE updateMinFlowIncrement2");
 			}
 		}
-		augmentingPathToString();
 		return deltaFlow;
 	}
 	
@@ -408,12 +374,10 @@ class Graph implements IGraph, Serializable {
 				queue.add(newVertex);
 			}
 		}
-		System.out.println("Vertex "+headVertex.id()+" - Excess: "+headVertex.getExcess());
 		if (headVertex.getExcess() > 0) {	//vertex still active
 			headVertex.resetIncreasedLabel();
 			queue.add(headVertex);
 		}
-		System.out.println(queue.toString());
 		//return queue length
 		return queue.size();
 	}
@@ -459,22 +423,5 @@ class Graph implements IGraph, Serializable {
         }
 		
 		return veritecsIds;
-	}
-	
-	//Auxiliary function
-	@Deprecated
-	private void augmentingPathToString() {
-		if (augmentingPath == null) {
-			System.out.println("Empty path");
-		} else {
-			StringBuilder s = new StringBuilder();
-			s.append("Augmenting Path: ");
-			
-			ListIterator<Edge> listIterator = augmentingPath.listIterator();
-			while (listIterator.hasNext()) {
-				s.append(listIterator.next().edgeToString());
-			}
-			System.out.println(s.toString());
-		}
 	}
 }

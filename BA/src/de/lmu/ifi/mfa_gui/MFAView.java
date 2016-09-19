@@ -434,6 +434,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
          if (myFlowNet.isDrawGraph()) {
 	         this.drawGraph();
          }
+         //TODO add coloring (info: yellow, success: green, failure: red)
          this.txtPrompt.setText(myFlowNet.getPrompt());
       }
    }

@@ -417,6 +417,8 @@ public class FlowNetwork extends Observable implements IFlowNetwork, Serializabl
 		return prompt;
 	}
 	
+	//TODO add getPromptType (info: yellow, success: green, failure: red)
+	
 	//commented in interface
 	public String displayFlowNetwork() {
 		StringBuilder s = new StringBuilder();

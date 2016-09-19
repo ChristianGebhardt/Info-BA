@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -165,6 +167,8 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);       
 //        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);	//start in maximized window
+        //change graph location on resize
+        addComponentListener(new SizeListener());
         
         //Program icon (LMU logo)
         URL url = MFAView.class.getResource("/resources/lmu.gif");
@@ -372,10 +376,7 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         graphComponent.setEnabled(false);		//no moving of vertices/edge
         graphComponent.setConnectable(false);	//no connection of vertices
         graphPanel.add(graphComponent, BorderLayout.CENTER);
-//        try {
-//			Thread.sleep(1);		//might be neclected
-//		} catch (Exception ex) {}
-        this.revalidate();		//repaint all the components of the container
+        this.revalidate();		//repaint all the components of the container (important when the graph is initialized with some components)
         this.repaint();			//repaint the container itself
         outputMask.add(graphPanel);
         outputMask.add(Box.createRigidArea(new Dimension(0,25)));
@@ -676,6 +677,33 @@ public class MFAView extends JFrame implements Observer, ActionListener {
 	        frame.setVisible(true);
 	   }	
 	}
+    
+    //checks the size of the frames and adjust the position of the visualized graph
+    private class SizeListener implements ComponentListener{
+        public void componentHidden(ComponentEvent arg0) {
+        }
+        public void componentMoved(ComponentEvent arg0) {   
+        }
+        //recalculate the center of the frame and reset the graph position
+        public void componentResized(ComponentEvent arg0) {
+            //get the size of layout
+	        double widthLayout = graphComponent.getLayoutAreaSize().getWidth();
+	        double heightLayout = graphComponent.getLayoutAreaSize().getHeight();
+	        //we need to determine the size of the graph
+	        double width = graph.getGraphBounds().getWidth();
+	        double height = graph.getGraphBounds().getHeight();
+	        double leftCorner = (widthLayout - width)/2 > 0 ? (widthLayout - width)/2 : 0;	// max(0, (widthLayout - width)/2)
+	        double topCorner = (heightLayout - height)/2 > 0 ? (heightLayout - height)/2 : 0;	// max(0, (heightLayout - height)/2)
+	        //set new geometry to set the graph in the center
+	        graph.getModel().setGeometry(graph.getDefaultParent(), 
+	                new mxGeometry(leftCorner, topCorner,
+	                        widthLayout, heightLayout));
+
+        }
+        public void componentShown(ComponentEvent arg0) {
+
+        }
+    }
    
 	//create help message to show in the help window (and at the program start)
 	private String helpMessage() {

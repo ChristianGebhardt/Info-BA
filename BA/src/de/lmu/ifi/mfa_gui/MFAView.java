@@ -172,7 +172,6 @@ public class MFAView extends JFrame implements Observer, ActionListener {
         
         //Program icon (LMU logo)
         URL url = MFAView.class.getResource("/resources/lmu.gif");
-        System.out.println(url);
         ImageIcon icon = new ImageIcon(url);
 		add(new JLabel(icon));					//CAN BE NECLECTED??
         setIconImage(icon.getImage());

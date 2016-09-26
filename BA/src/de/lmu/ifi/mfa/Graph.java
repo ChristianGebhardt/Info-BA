@@ -83,9 +83,9 @@ class Graph implements IGraph, Serializable {
 		this.addVertex(vertexId2);
 		Vertex startVertex = vertices.get(vertexId1);
 		Vertex endVertex = vertices.get(vertexId2);
-		startVertex.addEdge(endVertex,capacity);
-		endVertex.addResEdge(startVertex);
-		return true;
+		boolean success= startVertex.addEdge(endVertex,capacity);
+		success = success & endVertex.addResEdge(startVertex);
+		return success;
 	}
 	
 	//commented in interface
